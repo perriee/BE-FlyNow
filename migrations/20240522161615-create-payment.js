@@ -1,24 +1,26 @@
-'use strict';
+"use strict"
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('airlines', {
+    await queryInterface.createTable("payments", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      airlineCode: {
-        type: Sequelize.STRING,
-        allowNull: false,
+      bookingId: {
+        type: Sequelize.BIGINT,
       },
-      airlineName: {
-        type: Sequelize.STRING,
-        allowNull: false,
+      paymentAmount: {
+        type: Sequelize.INTEGER,
       },
-      deletedAt: {
-        type: Sequelize.DATE,
+      paymentMethod: {
+        type: Sequelize.STRING,
+      },
+      paymentStatus: {
+        type: Sequelize.ENUM("paid", "pending", "unpaid"),
+        defaultValue: "pending",
       },
       createdAt: {
         allowNull: false,
@@ -28,9 +30,13 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-    });
+      deletedAt: {
+        allowNull: true,
+        type: Sequelize.DATE,
+      },
+    })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('airlines');
+    await queryInterface.dropTable("payments")
   },
-};
+}
