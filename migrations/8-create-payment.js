@@ -11,6 +11,12 @@ module.exports = {
             },
             bookingId: {
                 type: Sequelize.BIGINT,
+                references: {
+                    model: {
+                        tableName: "bookings",
+                    },
+                    key: "id",
+                },
             },
             paymentAmount: {
                 type: Sequelize.INTEGER,
