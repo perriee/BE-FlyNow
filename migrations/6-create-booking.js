@@ -16,6 +16,12 @@ module.exports = {
       flightId: {
         allowNull: false,
         type: Sequelize.BIGINT,
+        references: {
+          model: {
+            tableName: "flights",
+          },
+          key: "id",
+        },
       },
       userId: {
         allowNull: false,

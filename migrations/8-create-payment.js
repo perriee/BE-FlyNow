@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -11,6 +11,12 @@ module.exports = {
       },
       bookingId: {
         type: Sequelize.BIGINT,
+        references: {
+          model: {
+            tableName: "bookings",
+          },
+          key: "id",
+        },
       },
       paymentAmount: {
         type: Sequelize.INTEGER,
@@ -34,9 +40,9 @@ module.exports = {
         allowNull: true,
         type: Sequelize.DATE,
       },
-    })
+    });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("payments")
+    await queryInterface.dropTable("payments");
   },
-}
+};
