@@ -8,6 +8,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // define association here
+      flight.hasMany(models.seat, { foreignKey: "flightId" });
       flight.hasMany(models.booking, { foreignKey: "flightId" });
     }
   }
@@ -53,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       deletedAt: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
       },
       createdAt: {
         type: DataTypes.DATE,

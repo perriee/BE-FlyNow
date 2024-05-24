@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       booking.hasMany(models.passenger, { foreignKey: "bookingId" });
       booking.hasOne(models.payment, { foreignKey: "bookingId" });
-
+      booking.belongsTo(models.user, { foreignKey: "userId" });
       booking.belongsTo(models.flight, { foreignKey: "flightId" });
     }
   }
