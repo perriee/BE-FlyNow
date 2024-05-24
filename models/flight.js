@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             flight.belongsTo(models.airport, {
                 foreignKey: "airlineId",
             });
+            flight.hasMany(models.seat, { foreignKey: "flightId" });
         }
     }
     flight.init(
@@ -62,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             deletedAt: {
                 type: DataTypes.DATE,
-                allowNull: false,
+                allowNull: true,
             },
             createdAt: {
                 type: DataTypes.DATE,

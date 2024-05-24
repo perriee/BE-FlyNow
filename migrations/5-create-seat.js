@@ -25,6 +25,10 @@ module.exports = {
             flightId: {
                 allowNull: false,
                 type: Sequelize.INTEGER,
+                references: {
+                    model: { tableName: "flights" },
+                    key: "id",
+                },
             },
             price: {
                 allowNull: false,
