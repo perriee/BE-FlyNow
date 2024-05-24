@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            booking.belongsTo(models.user, { foreignKey: "userId" });
             booking.hasMany(models.passenger, { foreignKey: "bookingId" });
         }
     }
@@ -27,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
             modelName: "booking",
             paranoid: true,
             timestamps: true,
-        },
+        }
     );
     return booking;
 };

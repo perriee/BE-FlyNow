@@ -20,6 +20,10 @@ module.exports = {
             userId: {
                 allowNull: false,
                 type: Sequelize.BIGINT,
+                references: {
+                    model: { tableName: "users" },
+                    key: "id",
+                },
             },
             numAdults: {
                 allowNull: false,
