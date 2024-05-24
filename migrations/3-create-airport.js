@@ -2,54 +2,28 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable("passengers", {
+        await queryInterface.createTable("airports", {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER,
             },
-            bookingId: {
-                allowNull: false,
-                type: Sequelize.INTEGER,
-            },
-            seatCode: {
+            airportCode: {
                 allowNull: false,
                 type: Sequelize.STRING,
             },
-            name: {
+            airportName: {
                 allowNull: false,
                 type: Sequelize.STRING,
             },
-            dateOfBirth: {
-                allowNull: false,
-                type: Sequelize.DATE,
-            },
-            nationality: {
+            city: {
                 allowNull: false,
                 type: Sequelize.STRING,
             },
-            docType: {
-                allowNull: false,
-                type: Sequelize.ENUM("ktp", "paspor", "kartu_keluarga"),
-                defaultValue: "ktp",
-            },
-            docNumber: {
+            country: {
                 allowNull: false,
                 type: Sequelize.STRING,
-            },
-            issuingCountry: {
-                allowNull: false,
-                type: Sequelize.STRING,
-            },
-            expiryDate: {
-                allowNull: false,
-                type: Sequelize.DATE,
-            },
-            passengerType: {
-                allowNull: false,
-                type: Sequelize.ENUM("adult", "children", "baby"),
-                defaultValue: "adult",
             },
             deletedAt: {
                 allowNull: true,
@@ -66,6 +40,6 @@ module.exports = {
         });
     },
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable("passengers");
+        await queryInterface.dropTable("airports");
     },
 };
