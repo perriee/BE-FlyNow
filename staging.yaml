@@ -1,0 +1,4 @@
+runtime: nodejs20
+service: flynow-staging
+vpc_access_connector:
+    name: "projects/fsw2-binar-academy/locations/asia-southeast2/connectors/connect-to-sql"
