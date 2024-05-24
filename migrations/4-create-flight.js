@@ -1,4 +1,4 @@
-"use strict";
+/* eslint-disable no-unused-vars */
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
@@ -36,6 +36,14 @@ module.exports = {
             airlineId: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
+                references: {
+                    model: {
+                        tableName: "airlines",
+                    },
+                    key: "id",
+                },
+                onDelete: "SET NULL",
+                onUpdate: "CASCADE",
             },
             departureTime: {
                 type: Sequelize.DATE,

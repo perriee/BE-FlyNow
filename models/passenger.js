@@ -1,5 +1,5 @@
-"use strict";
 const { Model } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
     class passenger extends Model {
         /**
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
             sequelize,
             modelName: "passenger",
             paranoid: true,
-        }
+        },
     );
     return passenger;
 };
