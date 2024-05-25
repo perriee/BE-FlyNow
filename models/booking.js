@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
             flightId: DataTypes.BIGINT,
             userId: DataTypes.BIGINT,
             numAdults: DataTypes.INTEGER,
-            numChildre: DataTypes.INTEGER,
+            numChildren: DataTypes.INTEGER,
             numBabies: DataTypes.INTEGER,
             deletedAt: DataTypes.DATE,
         },
