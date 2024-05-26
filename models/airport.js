@@ -1,5 +1,5 @@
-"use strict";
 const { Model } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
     class airport extends Model {
         /**
@@ -8,7 +8,12 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            // define association here
+            airport.hasMany(models.flight, {
+                foreignKey: "departureAirportId",
+            });
+            airport.hasMany(models.flight, {
+                foreignKey: "arrivalAirportId",
+            });
         }
     }
     airport.init(
@@ -23,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
             sequelize,
             modelName: "airport",
             paranoid: true,
-        }
+        },
     );
     return airport;
 };
