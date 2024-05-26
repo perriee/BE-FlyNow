@@ -9,22 +9,6 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER,
             },
-            bookingId: {
-                allowNull: false,
-                type: Sequelize.INTEGER,
-                references: {
-                    model: { tableName: "bookings" },
-                    key: "id",
-                },
-            },
-            seatId: {
-                allowNull: false,
-                type: Sequelize.INTEGER,
-                references: {
-                    model: { tableName: "seats" },
-                    key: "id",
-                },
-            },
             name: {
                 allowNull: false,
                 type: Sequelize.STRING,
