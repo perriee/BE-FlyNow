@@ -70,6 +70,10 @@ exports.updateAirlineById = async (id, payload) => {
 };
 
 exports.deleteAirlineById = async (id) => {
+    if ((await this.getAirlineById(id)) === null) {
+        throw new Error(`Airline with id ${id} not found`);
+    }
+
     await airline.destroy({
         where: {
             id,

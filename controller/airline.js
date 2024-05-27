@@ -63,7 +63,7 @@ exports.getAirlineById = async (req, res, next) => {
 
         if (!data) {
             return next({
-                message: `Class with id ${id} is not found!`,
+                message: `Airline with id ${id} is not found!`,
                 statusCode: 404,
             });
         }
