@@ -54,7 +54,13 @@ exports.updateAirlineById = async (id, payload) => {
         payload.image = imageUpload.secure_url;
     }
 
-    const data = await airline.update(payload, {
+    await airline.update(payload, {
+        where: {
+            id,
+        },
+    });
+
+    const data = airline.findOne({
         where: {
             id,
         },
