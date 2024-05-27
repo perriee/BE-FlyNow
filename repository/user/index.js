@@ -1,9 +1,9 @@
 const crypto = require("crypto"); // generate random string
 const bcrypt = require("bcrypt");
 const path = require("path");
+const axios = require("axios");
 const { user } = require("../../models");
 const { uploadToCloudinary } = require("../../helper/cloudinary");
-// const { getDataRedis, setDataRedis } = require("../../helper/redis");
 
 exports.createUser = async (payload) => {
     // check if the email already exists
@@ -65,4 +65,11 @@ exports.getUserByEmail = async (email) => {
     }
 
     throw new Error(`User with email ${email} is not found!`);
+};
+
+exports.getGoogleAccessTokenData = async (accessToken) => {
+    const response = await axios.get(
+        `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`,
+    );
+    return response.data;
 };
