@@ -36,24 +36,10 @@ exports.createUser = async (payload) => {
     // create data to postgres
     const data = await user.create(payload);
 
-    // create data to redis
-    // const keyID = `users:${data.id}`;
-    // await setDataRedis(keyID, data, 300);
-
-    // const keyEmail = `users:${data.email}`;
-    // await setDataRedis(keyEmail, data, 300);
-
     return data;
 };
 
 exports.getUserByID = async (id) => {
-    // get data from redis
-    // const key = `users:${id}`;
-    // let data = await getDataRedis(key);
-    // if (data) {
-    //     return data;
-    // }
-
     // get data from db
     let data = await user.findAll({
         where: {
@@ -61,9 +47,6 @@ exports.getUserByID = async (id) => {
         },
     });
     if (data.length > 0) {
-        // save to redis
-        // await setDataRedis(key, data[0], 300);
-
         return data[0];
     }
 
@@ -71,13 +54,6 @@ exports.getUserByID = async (id) => {
 };
 
 exports.getUserByEmail = async (email) => {
-    // get data from redis
-    // const key = `users:${email}`;
-    // let data = await getDataRedis(key);
-    // if (data) {
-    //     return data;
-    // }
-
     // get data from db
     let data = await user.findAll({
         where: {
@@ -85,9 +61,6 @@ exports.getUserByEmail = async (email) => {
         },
     });
     if (data.length > 0) {
-        // save to redis
-        // await setDataRedis(key, data[0], 300);
-
         return data[0];
     }
 

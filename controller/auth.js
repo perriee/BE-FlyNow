@@ -40,7 +40,6 @@ exports.register = async (req, res, next) => {
             password,
             image,
             phoneNumber,
-            isVerified: false, // default false
         });
 
         res.status(201).json({
