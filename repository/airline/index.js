@@ -60,7 +60,7 @@ exports.updateAirlineById = async (id, payload) => {
         },
     });
 
-    const data = airline.findOne({
+    const data = await airline.findOne({
         where: {
             id,
         },
@@ -69,11 +69,18 @@ exports.updateAirlineById = async (id, payload) => {
     return data;
 };
 
-exports.deleteAirlineById = (id) => {
-    const data = airline.destroy({
+exports.deleteAirlineById = async (id) => {
+    await airline.destroy({
         where: {
             id,
         },
+    });
+
+    const data = await airline.findOne({
+        where: {
+            id,
+        },
+        paranoid: false,
     });
 
     return data;
