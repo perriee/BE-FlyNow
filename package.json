@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "node index.js",
+        "start": "npx sequelize db:migrate && node index.js",
         "dev": "npx nodemon index.js"
     },
     "author": "",
