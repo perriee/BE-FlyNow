@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             booking.belongsToMany(models.passenger, {
                 through: "bookingDetail",
             });
-            booking.belongsToMany(models.seats, {
+            booking.belongsToMany(models.seat, {
                 through: "bookingDetail",
             });
             booking.hasOne(models.payment, { foreignKey: "bookingId" });

@@ -33,6 +33,7 @@ module.exports = {
             isVerified: {
                 allowNull: false,
                 type: Sequelize.BOOLEAN,
+                defaultValue: false,
             },
             deletedAt: {
                 allowNull: true,
