@@ -1,4 +1,4 @@
-const { booking, user, flight } = require("../models");
+const { booking, user, flight } = require("../../models");
 
 exports.getBookings = async () => {
     const data = await booking.findAll({

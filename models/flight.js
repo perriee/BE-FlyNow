@@ -10,10 +10,14 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
             flight.hasMany(models.seat, { foreignKey: "flightId" });
-            flight.hasMany(models.booking, { foreignKey: "flightId " });
+            flight.hasMany(models.booking, { foreignKey: "flightId" });
             flight.belongsTo(models.airline, { foreignKey: "airlineId" });
-            flight.belongsTo(models.airport, { foreignKey: "departureAirportId" });
-            flight.belongsTo(models.airport, { foreignKey: "arrivalAirportId" });
+            flight.belongsTo(models.airport, {
+                foreignKey: "departureAirportId",
+            });
+            flight.belongsTo(models.airport, {
+                foreignKey: "arrivalAirportId",
+            });
         }
     }
     flight.init(
@@ -43,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
             airlineId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                   references: {
+                references: {
                     model: "airline",
                     key: "id",
                 },
@@ -79,7 +83,7 @@ module.exports = (sequelize, DataTypes) => {
             sequelize,
             modelName: "flight",
             paranoid: true,
-        }
+        },
     );
     return flight;
 };

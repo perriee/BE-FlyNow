@@ -3,6 +3,7 @@ const bookingUsecase = require("../usecase/booking");
 exports.getBookings = async (req, res, next) => {
     try {
         const data = await bookingUsecase.getBookings();
+
         res.status(200).json({
             message: "Success",
             data,
@@ -68,18 +69,18 @@ exports.createBooking = async (req, res, next) => {
                 statusCode: 400,
             });
         }
-        if (!numChildren || numChildren == "") {
-            return next({
-                message: "Number Children must be filled",
-                statusCode: 400,
-            });
-        }
-        if (!numBabies || numBabies == "") {
-            return next({
-                message: "Number Babies must be filled",
-                statusCode: 400,
-            });
-        }
+        //   if (!numChildren || numChildren == "") {
+        //       return next({
+        //           message: "Number Children must be filled",
+        //           statusCode: 400,
+        //       });
+        //   }
+        //   if (!numBabies || numBabies == "") {
+        //       return next({
+        //           message: "Number Babies must be filled",
+        //           statusCode: 400,
+        //       });
+        //   }
 
         const data = await bookingUsecase.createBooking({
             bookingCode,
@@ -135,18 +136,18 @@ exports.updateBooking = async (req, res, next) => {
                 statusCode: 400,
             });
         }
-        if (!numChildren || numChildren == "") {
-            return next({
-                message: "Number Children must be filled",
-                statusCode: 400,
-            });
-        }
-        if (!numBabies || numBabies == "") {
-            return next({
-                message: "Number Babies must be filled",
-                statusCode: 400,
-            });
-        }
+        // if (!numChildren || numChildren == "") {
+        //     return next({
+        //         message: "Number Children must be filled",
+        //         statusCode: 400,
+        //     });
+        // }
+        // if (!numBabies || numBabies == "") {
+        //     return next({
+        //         message: "Number Babies must be filled",
+        //         statusCode: 400,
+        //     });
+        // }
 
         const data = await bookingUsecase.updateBooking(id, {
             bookingCode,

@@ -1,4 +1,4 @@
-const bookingRepo = require("../repository/booking");
+const bookingRepo = require("../../repository/booking");
 
 exports.getBookings = async () => {
     const data = await bookingRepo.getBookings();
