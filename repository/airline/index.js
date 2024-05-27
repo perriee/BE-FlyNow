@@ -1,21 +1,22 @@
 const path = require("path");
+const crypto = require("crypto");
 const { uploadToCloudinary } = require("../../helper/cloudinary");
-const airline = require("../../models/airline");
+const { airline } = require("../../models");
 
 exports.createAirline = async (payload) => {
-    if (payload.photo) {
+    if (payload.image) {
         // upload image to cloudinary
-        const { photo } = payload;
+        const { image } = payload;
 
         // make unique filename -> 213123128uasod9as8djas
-        photo.publicId = crypto.randomBytes(16).toString("hex");
+        image.publicId = crypto.randomBytes(16).toString("hex");
 
         // rename the file -> 213123128uasod9as8djas.jpg / 213123128uasod9as8djas.png
-        photo.name = `${photo.publicId}${path.parse(photo.name).ext}`;
+        image.name = `${image.publicId}${path.parse(image.name).ext}`;
 
         // Process to upload image
-        const imageUpload = await uploadToCloudinary(photo);
-        payload.photo = imageUpload.secure_url;
+        const imageUpload = await uploadToCloudinary(image);
+        payload.image = imageUpload.secure_url;
     }
 
     const data = await airline.create(payload);
@@ -38,19 +39,19 @@ exports.getAirlineById = (id) => {
 };
 
 exports.updateAirlineById = async (id, payload) => {
-    if (payload.photo) {
+    if (payload.image) {
         // upload image to cloudinary
-        const { photo } = payload;
+        const { image } = payload;
 
         // make unique filename -> 213123128uasod9as8djas
-        photo.publicId = crypto.randomBytes(16).toString("hex");
+        image.publicId = crypto.randomBytes(16).toString("hex");
 
         // rename the file -> 213123128uasod9as8djas.jpg / 213123128uasod9as8djas.png
-        photo.name = `${photo.publicId}${path.parse(photo.name).ext}`;
+        image.name = `${image.publicId}${path.parse(image.name).ext}`;
 
         // Process to upload image
-        const imageUpload = await uploadToCloudinary(photo);
-        payload.photo = imageUpload.secure_url;
+        const imageUpload = await uploadToCloudinary(image);
+        payload.image = imageUpload.secure_url;
     }
 
     const data = await airline.update(payload, {

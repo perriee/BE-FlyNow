@@ -7,6 +7,6 @@ const airline = require("./airline");
 
 router.use("/auth", auth);
 router.use("/passengers", passenger);
-router.use("/airline", airline);
+router.use("/airlines", airline);
 
 module.exports = router;
