@@ -5,6 +5,7 @@ exports.getBookings = async () => {
         include: [
             {
                 model: user,
+                attributes: ["id", "name", "email", "image", "phoneNumber"],
             },
             {
                 model: flight,
@@ -23,6 +24,7 @@ exports.getBookingId = async (id) => {
         include: [
             {
                 model: user,
+                attributes: ["id", "name", "email", "image", "phoneNumber"],
             },
             {
                 model: flight,
