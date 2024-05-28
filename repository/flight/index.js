@@ -2,7 +2,16 @@ const { where } = require("sequelize");
 const { flight, airport, airline, seat, booking } = require("../../models");
 
 exports.getAllFlights = async () => {
-    const data = await flight.findAll();
+    const data = await flight.findAll({
+        include: [
+            {
+                model: airport,
+            },
+            {
+                model: airline,
+            },
+        ],
+    });
     return data;
 };
 
@@ -11,6 +20,14 @@ exports.getFlight = async (id) => {
         where: {
           id,
         },
+        include: [
+            {
+                model: airport,
+            },
+            {
+                model: airline,
+            },
+        ],
     });
 
     if (data.length > 0) {
@@ -36,11 +53,16 @@ exports.updateFlight = async (id, payload) => {
         where: {
             id,
         },
-        include: {
-            model: airport, airline, seat, booking
-        },
+        include: [
+            {
+                model: airport,
+            },
+            {
+                model: airline,
+            },
+        ],
     });
-
+    
     if (data.length > 0) {
         return data[0];
     }
