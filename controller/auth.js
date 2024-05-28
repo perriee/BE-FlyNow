@@ -1,4 +1,4 @@
-const { register, login } = require("../usecase/auth");
+const { register, login, googleLogin } = require("../usecase/auth");
 
 exports.register = async (req, res, next) => {
     try {
@@ -43,7 +43,7 @@ exports.register = async (req, res, next) => {
         });
 
         res.status(201).json({
-            message: "User created successfully",
+            message: "Register Successful",
             data,
         });
     } catch (error) {
@@ -76,6 +76,30 @@ exports.login = async (req, res, next) => {
 
         res.status(200).json({
             message: "Login Successful",
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.googleLogin = async (req, res, next) => {
+    try {
+        // get the body
+        const { access_token } = req.body;
+
+        if (!access_token) {
+            return next({
+                statusCode: 400,
+                message: "Access token must be provided!",
+            });
+        }
+
+        // login with google logic
+        const data = await googleLogin(access_token);
+
+        res.status(200).json({
+            message: "Success",
             data,
         });
     } catch (error) {

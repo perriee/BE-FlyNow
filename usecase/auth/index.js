@@ -4,7 +4,9 @@ const {
     createUser,
     getUserByID,
     getUserByEmail,
+    getGoogleAccessTokenData,
 } = require("../../repository/user");
+const { createToken } = require("./util");
 
 exports.register = async (payload) => {
     let user = await createUser(payload);
@@ -66,6 +68,37 @@ exports.login = async (payload) => {
         user,
         token,
     };
+
+    return data;
+};
+
+exports.googleLogin = async (accessToken) => {
+    // validate the token and get the data from google
+    const googleData = await getGoogleAccessTokenData(accessToken);
+    console.log("google-data", googleData);
+
+    // get is there any existing user with the email
+    let user = await getUserByEmail(googleData?.email);
+    console.log("user", user);
+
+    // if not found
+    if (!user) {
+        // Create new user based on google data that get by access_token
+        user = await createUser({
+            name: googleData?.name,
+            email: googleData?.email,
+            password: "",
+            image: googleData?.picture,
+            // ! NOTE: kalo nanti error karna phone number nya not null, kasi nilai default seperti di bawah ini saja
+            // phoneNumber: "08",
+        });
+    }
+
+    // Delete object password from user
+    delete user?.dataValues?.password;
+
+    // create token
+    const data = createToken(user);
 
     return data;
 };
