@@ -5,11 +5,13 @@ const {
     getUserByID,
     getUserByEmail,
     getGoogleAccessTokenData,
+    getUserByResetPwdToken,
+    updateUserResetPwdToken,
 } = require("../../repository/user");
 const { createToken } = require("./util");
 
 exports.register = async (payload) => {
-    let user = await createUser(payload);
+    const user = await createUser(payload);
 
     // delete password frm object, agar tidak muncul di response
     delete user.dataValues.password;
@@ -118,4 +120,19 @@ exports.profile = async (id) => {
     }
 
     return user;
+};
+
+exports.getUserByEmail = async (email) => {
+    const data = await getUserByEmail(email);
+    return data;
+};
+
+exports.getUserByResetPwdToken = async (token) => {
+    const data = await getUserByResetPwdToken(token);
+    return data;
+};
+
+exports.updateUserResetPwdToken = async (id, payload) => {
+    const data = await updateUserResetPwdToken(id, payload);
+    return data;
 };
