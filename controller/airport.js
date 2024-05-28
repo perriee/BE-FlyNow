@@ -4,7 +4,7 @@ const {
     getAirportByID,
     editAirport,
     deleteAirport,
-    filterAirport,
+    searchAirport,
 } = require("../usecase/airport");
 
 exports.createAirport = async (req, res, next) => {
@@ -139,10 +139,10 @@ exports.deleteAirport = async (req, res, next) => {
     }
 };
 
-exports.filterAirport = async (req, res, next) => {
+exports.searchAirport = async (req, res, next) => {
     try {
         const { keyword } = req.query;
-        const data = await filterAirport(keyword);
+        const data = await searchAirport(keyword);
 
         res.status(200).json({
             message: "Success",

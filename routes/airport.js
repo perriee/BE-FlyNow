@@ -7,14 +7,22 @@ const {
     getAirportByID,
     editAirport,
     deleteAirport,
-    filterAirport,
+    searchAirport,
 } = require("../controller/airport");
+const { authMiddleware } = require("../middleware/auth");
 
-router.post("/", createAirport);
-router.get("/", getAllAirports);
-router.get("/filter", filterAirport);
+/* For "Admin" (won't be directly called in FE) */
+router
+    .route("/")
+    .post(authMiddleware(), createAirport)
+    .get(authMiddleware(), getAllAirports);
+router
+    .route("/:id")
+    .patch(authMiddleware(), editAirport)
+    .delete(authMiddleware(), deleteAirport);
+
+/* For Users (will be directly called in FE) */
+router.get("/search", searchAirport);
 router.get("/:id", getAirportByID);
-router.patch("/:id", editAirport);
-router.delete("/:id", deleteAirport);
 
 module.exports = router;

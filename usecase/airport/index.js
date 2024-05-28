@@ -4,7 +4,7 @@ const {
     getAirportByID,
     editAirport,
     deleteAirport,
-    filterAirport,
+    searchAirport,
 } = require("../../repository/airport");
 
 exports.createAirport = async (payload) => {
@@ -27,6 +27,6 @@ exports.deleteAirport = async (id) => {
     return await deleteAirport(id);
 };
 
-exports.filterAirport = async (payload) => {
-    return await filterAirport(payload);
+exports.searchAirport = async (payload) => {
+    return await searchAirport(payload);
 };

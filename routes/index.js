@@ -7,6 +7,6 @@ const airport = require("./airport");
 
 router.use("/auth", auth);
 router.use("/passengers", passenger);
-router.use("/airport", airport);
+router.use("/airports", airport);
 
 module.exports = router;

@@ -64,10 +64,10 @@ exports.deleteAirport = async (id) => {
     return foundAirport;
 };
 
-/* To be used in the airport filter search bar */
-exports.filterAirport = async (payload) => {
+/* To be used in the airport search bar */
+exports.searchAirport = async (payload) => {
     /* Will returns all airports where its code, name, city, or country CONTAINS the payload*/
-    /* Payload filter is case-INSENSITIVE */
+    /* Payload searhing is case-INSENSITIVE */
     console.log(payload);
     const data = await airport.findAll({
         where: {
