@@ -43,6 +43,8 @@ exports.createFlight = async (req, res, next) => {
           airlineId,
           departureTime,
           arrivalTime,
+          price,
+          seatType,
           information,
          } = req.body;
         if (!flightCode || flightCode == "") {
@@ -87,6 +89,18 @@ exports.createFlight = async (req, res, next) => {
             statusCode: 400,
           });
         }
+        if (!price || price == "") {
+          return next({
+            message: "Price must be provided!",
+            statusCode: 400,
+          });
+        }
+        if (!seatType || seatType == "") {
+          return next({
+            message: "Seat class must be provided!",
+            statusCode: 400,
+          });
+        }
         if (!information || information == "") {
           return next({
             message: "Inormation must be provided!",
@@ -102,6 +116,8 @@ exports.createFlight = async (req, res, next) => {
             airlineId,
             departureTime,
             arrivalTime,
+            price,
+            seatType,
             information,
         });
     
@@ -125,6 +141,8 @@ exports.updateFlight = async (req, res, next) => {
           airlineId,
           departureTime,
           arrivalTime,
+          price,
+          seatType,
           information,
          } = req.body;
         if (!flightCode || flightCode == "") {
@@ -169,6 +187,18 @@ exports.updateFlight = async (req, res, next) => {
             statusCode: 400,
           });
         }
+        if (!price || price == "") {
+          return next({
+            message: "Price must be provided!",
+            statusCode: 400,
+          });
+        }
+        if (!seatType || seatType == "") {
+          return next({
+            message: "Seat class must be provided!",
+            statusCode: 400,
+          });
+        }
         if (!information || information == "") {
           return next({
             message: "Inormation must be provided!",
@@ -184,6 +214,8 @@ exports.updateFlight = async (req, res, next) => {
             airlineId,
             departureTime,
             arrivalTime,
+            price,
+            seatType,
             information,
         });
     
