@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
             phoneNumber: DataTypes.STRING,
             isVerified: DataTypes.BOOLEAN,
             deletedAt: DataTypes.DATE,
+            resetPasswordToken: DataTypes.STRING,
         },
         {
             sequelize,

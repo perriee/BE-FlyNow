@@ -50,6 +50,23 @@ exports.updateBooking = async (id, payload) => {
 };
 
 exports.deleteBooking = async (id) => {
-    const data = await booking.destroy({ where: { id } });
-    return data;
+    const foundBooking = await booking.findOne({
+        where: {
+            id,
+        },
+    });
+
+    if (!foundBooking) {
+        throw new Error(`Booking With id:${id} is not found`);
+    }
+
+    // Delete the airport
+    await booking.destroy({
+        where: {
+            id,
+        },
+    });
+
+    // Return the data of the deleted airport
+    return foundBooking;
 };
