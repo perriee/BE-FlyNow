@@ -18,6 +18,7 @@
         "express": "^4.19.2",
         "express-fileupload": "^1.5.0",
         "jsonwebtoken": "^9.0.2",
+        "nodemailer": "^6.9.13",
         "pg": "^8.11.5",
         "pg-hstore": "^2.3.4",
         "redis": "^4.6.14",

@@ -2,6 +2,7 @@ const crypto = require("crypto"); // generate random string
 const bcrypt = require("bcrypt");
 const path = require("path");
 const axios = require("axios");
+const { Op } = require("sequelize");
 const { user } = require("../../models");
 const { uploadToCloudinary } = require("../../helper/cloudinary");
 
@@ -41,7 +42,7 @@ exports.createUser = async (payload) => {
 
 exports.getUserByID = async (id) => {
     // get data from db
-    let data = await user.findAll({
+    const data = await user.findAll({
         where: {
             id,
         },
@@ -55,7 +56,7 @@ exports.getUserByID = async (id) => {
 
 exports.getUserByEmail = async (email) => {
     // get data from db
-    let data = await user.findAll({
+    const data = await user.findAll({
         where: {
             email,
         },
@@ -67,9 +68,63 @@ exports.getUserByEmail = async (email) => {
     throw new Error(`User with email ${email} is not found!`);
 };
 
+exports.getUserByResetPwdToken = async (token) => {
+    // get data from db
+    const data = await user.findOne({
+        where: {
+            resetPasswordToken: {
+                [Op.eq]: token,
+            },
+        },
+    });
+
+    if (!data) {
+        throw new Error(`Invalid or Expired Password Reset Token`);
+    }
+
+    return data;
+};
+
 exports.getGoogleAccessTokenData = async (accessToken) => {
     const response = await axios.get(
         `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`,
     );
     return response.data;
+};
+
+exports.updateUserResetPwdToken = async (id, payload) => {
+    await user.update(payload, {
+        where: {
+            id,
+        },
+    });
+
+    const data = await user.findAll({
+        where: {
+            id,
+        },
+    });
+
+    if (data.length > 0) {
+        return data[0];
+    }
+
+    throw new Error(`User is not found!`);
+};
+
+exports.updateUserPassword = async (resetPasswordToken, newPassword) => {
+    // hash the new password
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+
+    // update user password using resetPasswordToken
+    await user.update(
+        { password: hashedPassword }, // update only the password column
+        {
+            where: {
+                resetPasswordToken: {
+                    [Op.eq]: resetPasswordToken,
+                },
+            },
+        },
+    );
 };
