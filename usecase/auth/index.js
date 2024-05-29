@@ -4,10 +4,15 @@ const {
     createUser,
     getUserByID,
     getUserByEmail,
+    getGoogleAccessTokenData,
+    getUserByResetPwdToken,
+    updateUserResetPwdToken,
+    updateUserPassword,
 } = require("../../repository/user");
+const { createToken } = require("./util");
 
 exports.register = async (payload) => {
-    let user = await createUser(payload);
+    const user = await createUser(payload);
 
     // delete password frm object, agar tidak muncul di response
     delete user.dataValues.password;
@@ -70,6 +75,37 @@ exports.login = async (payload) => {
     return data;
 };
 
+exports.googleLogin = async (accessToken) => {
+    // validate the token and get the data from google
+    const googleData = await getGoogleAccessTokenData(accessToken);
+    console.log("google-data", googleData);
+
+    // get is there any existing user with the email
+    let user = await getUserByEmail(googleData?.email);
+    console.log("user", user);
+
+    // if not found
+    if (!user) {
+        // Create new user based on google data that get by access_token
+        user = await createUser({
+            name: googleData?.name,
+            email: googleData?.email,
+            password: "",
+            image: googleData?.picture,
+            // ! NOTE: kalo nanti error karna phone number nya not null, kasi nilai default seperti di bawah ini saja
+            // phoneNumber: "08",
+        });
+    }
+
+    // Delete object password from user
+    delete user?.dataValues?.password;
+
+    // create token
+    const data = createToken(user);
+
+    return data;
+};
+
 exports.profile = async (id) => {
     // get user
     let user = await getUserByID(id);
@@ -85,4 +121,24 @@ exports.profile = async (id) => {
     }
 
     return user;
+};
+
+exports.getUserByEmail = async (email) => {
+    const data = await getUserByEmail(email);
+    return data;
+};
+
+exports.getUserByResetPwdToken = async (token) => {
+    const data = await getUserByResetPwdToken(token);
+    return data;
+};
+
+exports.updateUserResetPwdToken = async (id, payload) => {
+    const data = await updateUserResetPwdToken(id, payload);
+    return data;
+};
+
+exports.updateUserPassword = async (token, newPassword) => {
+    const data = await updateUserPassword(token, newPassword);
+    return data;
 };
