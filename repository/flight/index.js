@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const { flight, airport, airline, seat, booking } = require("../../models");
 
 exports.getAllFlights = async () => {
@@ -18,7 +17,7 @@ exports.getAllFlights = async () => {
 exports.getFlight = async (id) => {
     const data = await flight.findAll({
         where: {
-          id,
+            id,
         },
         include: [
             {
@@ -33,7 +32,7 @@ exports.getFlight = async (id) => {
     if (data.length > 0) {
         return data[0];
     }
-    
+
     throw new Error(`Flights is not found!`);
 };
 
@@ -62,7 +61,7 @@ exports.updateFlight = async (id, payload) => {
             },
         ],
     });
-    
+
     if (data.length > 0) {
         return data[0];
     }
@@ -71,6 +70,6 @@ exports.updateFlight = async (id, payload) => {
 };
 
 exports.deleteFlight = async (id) => {
-    await flight.destroy({ where: { id }});
+    await flight.destroy({ where: { id } });
     return null;
-}
+};
