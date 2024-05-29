@@ -8,6 +8,7 @@ const airport = require("./airport");
 const payment = require("./payment");
 const flight = require("./flight");
 const { authMiddleware } = require("../middleware/auth");
+const booking = require("./booking");
 
 router.use("/auth", auth);
 router.use("/passengers", passenger);
@@ -16,5 +17,6 @@ router.use("/passengers", passenger);
 router.use("/airports", airport);
 router.use("/payment", payment);
 router.use("/flight", flight);
+router.use("/booking", booking);
 
 module.exports = router;
