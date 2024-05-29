@@ -9,13 +9,16 @@ const {
     forgotPassword,
     resetPassword,
 } = require("../controller/auth");
-const { authMiddleware } = require("../middleware/auth");
+const {
+    authMiddleware,
+    verifyResetPasswordToken,
+} = require("../middleware/auth");
 
 router.post("/register", register);
 router.post("/login", login);
 router.post("/google-login", googleLogin);
 router.get("/profile", authMiddleware(), profile);
-router.put("/forgot-password", authMiddleware(), forgotPassword);
-router.put("/reset-password", authMiddleware(), resetPassword);
+router.put("/forgot-password", forgotPassword);
+router.put("/reset-password", verifyResetPasswordToken(), resetPassword);
 
 module.exports = router;

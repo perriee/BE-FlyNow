@@ -2,6 +2,7 @@ const crypto = require("crypto"); // generate random string
 const bcrypt = require("bcrypt");
 const path = require("path");
 const axios = require("axios");
+const { Op } = require("sequelize");
 const { user } = require("../../models");
 const { uploadToCloudinary } = require("../../helper/cloudinary");
 
@@ -69,17 +70,19 @@ exports.getUserByEmail = async (email) => {
 
 exports.getUserByResetPwdToken = async (token) => {
     // get data from db
-    const data = await user.findAll({
+    const data = await user.findOne({
         where: {
-            resetPasswordToken: token,
+            resetPasswordToken: {
+                [Op.eq]: token,
+            },
         },
     });
 
-    if (data.length > 0) {
-        return data[0];
+    if (!data) {
+        throw new Error(`Invalid or Expired Password Reset Token`);
     }
 
-    throw new Error(`Invalid or Expired Password Reset Token`);
+    return data;
 };
 
 exports.getGoogleAccessTokenData = async (accessToken) => {
@@ -107,4 +110,21 @@ exports.updateUserResetPwdToken = async (id, payload) => {
     }
 
     throw new Error(`User is not found!`);
+};
+
+exports.updateUserPassword = async (resetPasswordToken, newPassword) => {
+    // hash the new password
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+
+    // update user password using resetPasswordToken
+    await user.update(
+        { password: hashedPassword }, // update only the password column
+        {
+            where: {
+                resetPasswordToken: {
+                    [Op.eq]: resetPasswordToken,
+                },
+            },
+        },
+    );
 };

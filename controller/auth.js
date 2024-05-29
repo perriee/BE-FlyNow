@@ -7,6 +7,7 @@ const {
     updateUserResetPwdToken,
     getUserByEmail,
     getUserByResetPwdToken,
+    updateUserPassword,
 } = require("../usecase/auth");
 const { createToken } = require("../usecase/auth/util");
 
@@ -200,10 +201,10 @@ exports.resetPassword = async (req, res, next) => {
             });
         }
 
-        const hashPassword = bcrypt.hashSync(password, 10);
-        user.password = hashPassword;
-        await user.save();
+        // update user password
+        await updateUserPassword(token, password);
 
+        // set resetPasswordToken to null when user already update the password
         await updateUserResetPwdToken(id, {
             resetPasswordToken: null,
         });

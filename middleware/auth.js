@@ -1,5 +1,5 @@
 const { getTokenFromHeaders, extractToken } = require("../helper/auth");
-const { profile } = require("../usecase/auth/index");
+const { profile, getUserByResetPwdToken } = require("../usecase/auth/index");
 
 exports.authMiddleware = (roles) => async (req, res, next) => {
     try {
@@ -24,6 +24,21 @@ exports.authMiddleware = (roles) => async (req, res, next) => {
         req.user = user;
 
         next(); // jika middleware ini success maka akan next ke middleware selanjutnya
+    } catch (error) {
+        error.statusCode = 401; // error unauthorized
+        next(error);
+    }
+};
+
+exports.verifyResetPasswordToken = () => async (req, res, next) => {
+    try {
+        const { token } = req.body;
+
+        // check if the reset password token exists and is valid
+        await getUserByResetPwdToken(token);
+
+        // if token is valid, proceed to the reset password controller
+        next();
     } catch (error) {
         error.statusCode = 401; // error unauthorized
         next(error);
