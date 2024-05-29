@@ -68,7 +68,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            seatType: {
+            flightClass: {
                 type: ENUM("economy", "business", "first_class"),
                 allowNull: false,
             },

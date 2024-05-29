@@ -57,7 +57,7 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 allowNull: false,
             },
-            seatType: {
+            flightClass: {
                 allowNull: false,
                 type: Sequelize.ENUM("economy", "business", "first_class"),
                 defaultValue: "economy",

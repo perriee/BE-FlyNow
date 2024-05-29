@@ -44,7 +44,7 @@ exports.createFlight = async (req, res, next) => {
           departureTime,
           arrivalTime,
           price,
-          seatType,
+          flightClass,
           information,
          } = req.body;
         if (!flightCode || flightCode == "") {
@@ -95,9 +95,9 @@ exports.createFlight = async (req, res, next) => {
             statusCode: 400,
           });
         }
-        if (!seatType || seatType == "") {
+        if (!flightClass || flightClass == "") {
           return next({
-            message: "Seat class must be provided!",
+            message: "Flight class must be provided!",
             statusCode: 400,
           });
         }
@@ -117,7 +117,7 @@ exports.createFlight = async (req, res, next) => {
             departureTime,
             arrivalTime,
             price,
-            seatType,
+            flightClass,
             information,
         });
     
@@ -142,7 +142,7 @@ exports.updateFlight = async (req, res, next) => {
           departureTime,
           arrivalTime,
           price,
-          seatType,
+          flightClass,
           information,
          } = req.body;
         if (!flightCode || flightCode == "") {
@@ -193,9 +193,9 @@ exports.updateFlight = async (req, res, next) => {
             statusCode: 400,
           });
         }
-        if (!seatType || seatType == "") {
+        if (!flightClass || flightClass == "") {
           return next({
-            message: "Seat class must be provided!",
+            message: "Flight class must be provided!",
             statusCode: 400,
           });
         }
@@ -215,7 +215,7 @@ exports.updateFlight = async (req, res, next) => {
             departureTime,
             arrivalTime,
             price,
-            seatType,
+            flightClass,
             information,
         });
     
