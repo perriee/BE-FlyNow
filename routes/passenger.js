@@ -7,7 +7,7 @@ const { authMiddleware } = require("../middleware/auth");
 router
     .route("/")
     .get(authMiddleware(), passengerController.getPassengers)
-    .post(authMiddleware(), passengerController.createPassenger);
+    .post(passengerController.createPassenger);
 
 router
     .route("/:id")

@@ -1,4 +1,5 @@
 const passengerRepo = require("../../repository/passenger");
+// const passengerRepo = require("../../repository/passenger");
 
 exports.getPassengers = async () => {
     const data = await passengerRepo.getPassengers();
