@@ -14,7 +14,7 @@ const { authMiddleware } = require("../middleware/auth");
 /* For "Admin" (won't be directly called in FE) */
 router
     .route("/")
-    .post(authMiddleware(), createAirport)
+    .post( createAirport)
     .get(authMiddleware(), getAllAirports);
 router
     .route("/:id")

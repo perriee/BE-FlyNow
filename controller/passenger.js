@@ -1,4 +1,6 @@
 const passengerUsecase = require("../usecase/passenger");
+const bookingUsecase = require("../usecase/booking");
+const bookingDetailUsecase = require("../usecase/bookingDetail")
 
 exports.getPassengers = async (req, res, next) => {
     try {
@@ -35,40 +37,80 @@ exports.getPassenger = async (req, res, next) => {
 
 exports.createPassenger = async (req, res, next) => {
     try {
-        const passengers = [
+        const passengers = [ // Ini ceritanya payload dari req.body nya
             {
-                name: "Joe",
-                dateOfBirth: "121212",
-                nationality: "Indonesian",
-                docType: "ktp",
-                docNumber: "12345",
-                issuingCountry: "Indonesian",
-                expiryDate: "121212",
+                name: "Jane Smith",
+                dateOfBirth: "1985-06-15T00:00:00.000Z",
+                nationality: "Canada",
+                docType: "paspor",
+                docNumber: "C987654",
+                issuingCountry: "Canada",
+                expiryDate: "2028-12-31T00:00:00.000Z",
                 passengerType: "adult",
+                seatId: 1, // Ga dimasukin pas createPassenger
+                price: 125 // Ga dimasukin pas createPassenger
             },
             {
-                name: "Jean",
-                dateOfBirth: "121212",
-                nationality: "Indonesian",
-                docType: "ktp",
-                docNumber: "12345",
-                issuingCountry: "Indonesian",
-                expiryDate: "121212",
-                passengerType: "children",
+                name: "John Smith",
+                dateOfBirth: "1985-06-15T00:00:00.000Z",
+                nationality: "Canada",
+                docType: "paspor",
+                docNumber: "C987654",
+                issuingCountry: "Canada",
+                expiryDate: "2028-12-31T00:00:00.000Z",
+                passengerType: "adult",
+                seatId: 2, // Ga dimasukin pas createPassenger
+                price: 125 // Ga dimasukin pas createPassenger
             },
         ];
 
-        const data = await Promise.all(
+        const booking = { // Ini ceritanya payload dari req.body nya
+            bookingCode: "BK001",
+                flightId: "1",
+                userId: "1",
+                numAdults: 2,
+                numChildren: 1,
+                numBabies: 0
+        }
+
+        const passengersData = await Promise.all( // Pake promise all soalnya pake async await di dalemnya
             passengers.map(async (passenger) => {
                 const result =
-                    await passengerUsecase.createPassenger(passenger);
+                    await passengerUsecase.createPassenger({
+                        name: passenger.name,
+                        dateOfBirth: passenger.dateOfBirth,
+                        nationality:passenger.nationality,
+                        docType: passenger.docType,
+                        docNumber: passenger.docNumber,
+                        issuingCountry: passenger.issuingCountry,
+                        expiryDate: passenger.expiryDate,
+                        passengerType: passenger.passengerType,
+                    });
+                return result.dataValues;
+            }),
+        );
+
+        const bookingData = await bookingUsecase.createBooking(booking)
+
+        const bookingDetailsData = await Promise.all(
+            passengersData.map(async (passenger, id) => {
+                const result =
+                    await bookingDetailUsecase.createBookingDetail({
+                        bookingId: bookingData.id,
+                        passengerId: passenger.id,
+                        seatId: passengers[id].seatId,
+                    });
                 return result.dataValues;
             }),
         );
 
         res.status(201).json({
             message: "success",
-            data,
+            data: {
+                booking: bookingData,
+                bookingDetails: bookingDetailsData,
+                passengers: passengersData
+            },
         });
     } catch (error) {
         next(error);

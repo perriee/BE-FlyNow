@@ -1,8 +1,10 @@
-// const express = require("express");
-// const router = express.Router();
-// const bookingDetailController = require("../controller/booking");
-// const { authMiddleware } = require("../middleware/auth");
+const express = require("express");
+const router = express.Router();
+const bookingDetailController = require("../controller/bookingDetail");
+const { authMiddleware } = require("../middleware/auth");
 
-// router
-//     .route("/")
-//     .post(authMiddleware(), bookingDetailController.createBookingDetail);
+router
+    .route("/")
+    .post(bookingDetailController.createBookingDetail);
+
+    module.exports = router;
