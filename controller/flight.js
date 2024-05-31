@@ -1,9 +1,22 @@
 const flightUsecase = require("../usecase/flight");
 
-exports.getAllFlights = async (req, res, next) => {
+exports.searchFlight = async (req, res, next) => {
     try {
         const query = req.query;
-        const data = await flightUsecase.getAllFlights(query);
+        const data = await flightUsecase.searchFlight(query);
+
+        res.status(200).json({
+            message: "Success",
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getAllFlights = async (req, res, next) => {
+    try {
+        const data = await flightUsecase.getAllFlights();
 
         res.status(200).json({
             message: "Success",

@@ -2,7 +2,7 @@ const { where } = require("sequelize");
 const { Op, Sequelize } = require("sequelize");
 const { flight, airport, airline } = require("../../models");
 
-exports.getAllFlights = async (query) => {
+exports.searchFlight = async (query) => {
     let order;
     if (query.sort) {
         const sortOrder = query.sort.toLowerCase() === "desc" ? "DESC" : "ASC";
@@ -11,7 +11,7 @@ exports.getAllFlights = async (query) => {
         order = [["departureTime", "ASC"]];
     }
 
-    const data = await flight.findAll({
+    const departureFlights = await flight.findAll({
         where: {
             [Op.and]: [
                 Sequelize.where(
@@ -19,6 +19,7 @@ exports.getAllFlights = async (query) => {
                     query.departureTime,
                 ),
             ],
+            flightClass: query.class,
         },
         include: [
             {
@@ -41,8 +42,63 @@ exports.getAllFlights = async (query) => {
         ],
         order: order,
     });
+
+    if (query.returnDate) {
+        const returnFlights = await flight.findAll({
+            where: {
+                [Op.and]: [
+                    Sequelize.where(
+                        Sequelize.fn("DATE", Sequelize.col("departureTime")),
+                        query.returnDate,
+                    ),
+                ],
+                flightClass: query.class,
+            },
+            include: [
+                {
+                    model: airport,
+                    as: "departureAirport",
+                    where: {
+                        airportCode: query.arrivalAirport,
+                    },
+                },
+                {
+                    model: airport,
+                    as: "arrivalAirport",
+                    where: {
+                        airportCode: query.departureAirport,
+                    },
+                },
+                {
+                    model: airline,
+                },
+            ],
+            order: order,
+        });
+        return { departureFlights, returnFlights };
+    }
+    return departureFlights;
+};
+
+exports.getAllFlights = async () => {
+    const data = await flight.findAll({
+        include: [
+            {
+                model: airport,
+                as: "departureAirport",
+            },
+            {
+                model: airport,
+                as: "arrivalAirport",
+            },
+            {
+                model: airline,
+            },
+        ],
+    });
     return data;
 };
+
 
 exports.getFlight = async (id) => {
     const data = await flight.findAll({
