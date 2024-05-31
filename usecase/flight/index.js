@@ -1,7 +1,7 @@
 const flightRepo = require("../../repository/flight");
 
-exports.getAllFlights = async () => {
-    const data = await flightRepo.getAllFlights();
+exports.getAllFlights = async (query) => {
+    const data = await flightRepo.getAllFlights(query);
     return data;
 };
 
