@@ -9,7 +9,18 @@ module.exports = (sequelize, DataTypes) => {
          */
         // eslint-disable-next-line no-unused-vars
         static associate(models) {
-            // define association here
+            bookingDetail.belongsTo(models.booking, {
+                foreignKey: "bookingId",
+                as: "booking",
+            });
+            bookingDetail.belongsTo(models.passenger, {
+                foreignKey: "passengerId",
+                as: "passenger",
+            });
+            bookingDetail.belongsTo(models.seat, {
+                foreignKey: "seatId",
+                as: "seat",
+            });
         }
     }
     bookingDetail.init(
@@ -28,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
                     key: "id",
                 },
             },
-            passangerId: {
+            passengerId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
