@@ -5,12 +5,15 @@ exports.getBookingDetails = async () => {
         include: [
             {
                 model: booking,
+                as: "booking",
             },
             {
                 model: passenger,
+                as: "passenger",
             },
             {
                 model: seat,
+                as: "seat",
             },
         ],
     });
@@ -25,19 +28,19 @@ exports.getBookingDetailById = async (id) => {
         include: [
             {
                 model: booking,
+                as: "booking",
             },
             {
                 model: passenger,
+                as: "passenger",
             },
             {
                 model: seat,
+                as: "seat",
             },
         ],
     });
-    if (data.length > 0) {
-        return data[0];
-    }
-    throw new Error(`Booking Details Not Found`);
+    return data;
 };
 
 exports.createBookingDetail = async (payload) => {
@@ -59,12 +62,15 @@ exports.updateBookingDetail = async (id, payload) => {
         include: [
             {
                 model: booking,
+                as: "booking",
             },
             {
                 model: passenger,
+                as: "passenger",
             },
             {
                 model: seat,
+                as: "seat",
             },
         ],
     });

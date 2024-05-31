@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
                     key: "id",
                 },
             },
-            passangerId: {
+            passengerId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
