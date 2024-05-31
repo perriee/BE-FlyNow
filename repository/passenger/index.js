@@ -16,6 +16,11 @@ exports.createPassenger = async (payload) => {
     return data;
 };
 
+exports.createBulkPassenger = async (payload) => {
+    const data = await passenger.bulkCreate(payload);
+    return data;
+};
+
 exports.updatePassenger = async (id, payload) => {
     const [affectedRows] = await passenger.update(payload, {
         where: {

@@ -1,4 +1,6 @@
+const { sequelize } = require("../../models");
 const bookingRepo = require("../../repository/booking");
+const passangerRepo = require("../../repository/passenger");
 
 exports.getBookings = async () => {
     const data = await bookingRepo.getBookings();
@@ -11,8 +13,28 @@ exports.getBookingId = async (id) => {
 };
 
 exports.createBooking = async (payload) => {
-    const data = await bookingRepo.createBooking(payload);
-    return data;
+    const { bookingData: bookingPayload, passangersData: passangersPayload } =
+        payload;
+
+    const t = await sequelize.transaction();
+
+    try {
+        const passangersResult = await passangerRepo.createBulkPassenger(
+            passangersPayload
+        );
+
+        const bookingResult = await bookingRepo.createBooking(bookingPayload);
+
+        await t.commit();
+
+        return {
+            passangersResult,
+            bookingResult,
+        };
+    } catch (error) {
+        await t.rollback();
+        throw error;
+    }
 };
 
 exports.updateBooking = async (id, payload) => {
