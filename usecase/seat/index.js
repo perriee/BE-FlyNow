@@ -17,7 +17,7 @@ exports.createSeat = async (payload) => {
 
 exports.updateSeat = async (id, payload) => {
     await seatRepo.updateSeat(id, payload);
-    const data = await seatRepo.getSeat(id);
+    const data = await seatRepo.updateSeat(id);
     return data;
 };
 

@@ -1,7 +1,14 @@
-const { seat } = require("../../models");
+const { where } = require("sequelize");
+const { seat, flight } = require("../../models");
 
 exports.getSeats = async () => {
-    const data = await seat.findAll();
+    const data = await seat.findAll({
+        include: [
+            {
+                model: flight,
+            },
+        ],
+    });
     return data;
 };
 
@@ -10,6 +17,11 @@ exports.getSeatById = async (id) => {
         where: {
             id,
         },
+        include: [
+            {
+                model: flight,
+            },
+        ],
     });
     if (data.length > 0) {
         return data[0];
@@ -24,12 +36,27 @@ exports.createSeat = async (payload) => {
 };
 
 exports.updateSeat = async (id, payload) => {
-    const [affectedRows] = await seat.update(payload, {
+    await seat.update(payload, {
         where: {
             id,
         },
     });
-    return affectedRows;
+
+    const data = await seat.findAll({
+        where : {
+            id,
+        },
+        include: [
+            {
+                model: flight,
+            }
+        ]
+    })
+
+    if( data.length > 0 ) {
+        return data[0];
+    }
+    throw new Error(`Seat is not found!`);
 };
 
 exports.deleteSeat = async (id) => {
@@ -44,5 +71,5 @@ exports.deleteSeat = async (id) => {
 		throw new Error(`Seat not found!`);
 	}
 
-    return data;
+    return null;
 };

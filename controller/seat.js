@@ -4,7 +4,7 @@ exports.getSeats = async (req, res, next) => {
     try {
         const data = await seatUsecase.getSeats();
         res.status(200).json({
-            message: "success",
+            message: "success get all data",
             data,
         });
     } catch (error) {
@@ -24,7 +24,7 @@ exports.getSeatById = async (req, res, next) => {
             });
         }
         res.status(200).json({
-            message: "success",
+            message: "success get data by id",
             data,
         });
     } catch (error) {
@@ -62,7 +62,7 @@ exports.createSeat = async (req, res, next) => {
         });
 
         res.status(200).json({
-            message: "success",
+            message: "success create new data",
             data,
         });
     } catch (error) {
@@ -98,7 +98,7 @@ exports.updateSeat = async (req, res, next) => {
             flightId,
         });
         res.status(200).json({
-            message: "success",
+            message: "success update data",
             data,
         });
     } catch (error) {
@@ -111,7 +111,7 @@ exports.deleteSeat = async (req, res, next) => {
 		const { id } = req.params;
 		const data = await seatUsecase.deleteSeat(id);
 		res.status(200).json({
-			message: "success",
+			message: "success delete data",
 			data,
 		});
 	} catch (error) {
