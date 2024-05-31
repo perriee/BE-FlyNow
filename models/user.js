@@ -25,6 +25,8 @@ module.exports = (sequelize, DataTypes) => {
             isVerified: DataTypes.BOOLEAN,
             deletedAt: DataTypes.DATE,
             resetPasswordToken: DataTypes.STRING,
+            otp: DataTypes.STRING,
+            otpCreatedAt: DataTypes.DATE,
         },
         {
             sequelize,

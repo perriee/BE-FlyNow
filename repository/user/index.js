@@ -42,30 +42,32 @@ exports.createUser = async (payload) => {
 
 exports.getUserByID = async (id) => {
     // get data from db
-    const data = await user.findAll({
+    const data = await user.findOne({
         where: {
             id,
         },
     });
-    if (data.length > 0) {
-        return data[0];
+
+    if (!data) {
+        throw new Error(`User is not found!`);
     }
 
-    throw new Error(`User is not found!`);
+    return data;
 };
 
 exports.getUserByEmail = async (email) => {
     // get data from db
-    const data = await user.findAll({
+    const data = await user.findOne({
         where: {
             email,
         },
     });
-    if (data.length > 0) {
-        return data[0];
+
+    if (!data) {
+        throw new Error(`User with email ${email} is not found!`);
     }
 
-    throw new Error(`User with email ${email} is not found!`);
+    return data;
 };
 
 exports.getUserByResetPwdToken = async (token) => {
@@ -92,24 +94,24 @@ exports.getGoogleAccessTokenData = async (accessToken) => {
     return response.data;
 };
 
-exports.updateUserResetPwdToken = async (id, payload) => {
+exports.updateUser = async (id, payload) => {
     await user.update(payload, {
         where: {
             id,
         },
     });
 
-    const data = await user.findAll({
+    const data = await user.findOne({
         where: {
             id,
         },
     });
 
-    if (data.length > 0) {
-        return data[0];
+    if (!data) {
+        throw new Error(`User is not found!`);
     }
 
-    throw new Error(`User is not found!`);
+    return data;
 };
 
 exports.updateUserPassword = async (resetPasswordToken, newPassword) => {
