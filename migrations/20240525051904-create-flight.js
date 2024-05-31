@@ -53,6 +53,15 @@ module.exports = {
                 type: Sequelize.DATE,
                 allowNull: false,
             },
+            price: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+            },
+            flightClass: {
+                allowNull: false,
+                type: Sequelize.ENUM("economy", "business", "first_class"),
+                defaultValue: "economy",
+            },
             information: {
                 type: Sequelize.TEXT,
                 allowNull: false,

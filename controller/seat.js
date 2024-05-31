@@ -34,7 +34,7 @@ exports.getSeatById = async (req, res, next) => {
 
 exports.createSeat = async (req, res, next) => {
     try {
-        const { seatCode, seatAvailable, seatType, flightId, price } = req.body;
+        const { seatCode, seatAvailable, flightId } = req.body;
 
         if (!seatCode || seatCode === "") {
             return next({
@@ -48,21 +48,9 @@ exports.createSeat = async (req, res, next) => {
                 statusCode: 400,
             });
         }
-        if (!seatType || seatType === "") {
-            return next({
-                message: "seatType is required!",
-                statusCode: 400,
-            });
-        }
         if (!flightId || flightId === "") {
             return next({
                 message: "flightId is required!",
-                statusCode: 400,
-            });
-        }
-        if (!price || price === "") {
-            return next({
-                message: "price is required!",
                 statusCode: 400,
             });
         }
@@ -70,9 +58,7 @@ exports.createSeat = async (req, res, next) => {
         const data = await seatUsecase.createSeat({
             seatCode,
             seatAvailable,
-            seatType,
             flightId,
-            price,
         });
 
         res.status(200).json({
@@ -87,7 +73,7 @@ exports.createSeat = async (req, res, next) => {
 exports.updateSeat = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { seatCode, seatAvailable, seatType, flightId, price } = req.body;
+        const { seatCode, seatAvailable, flightId } = req.body;
         if (!seatCode || seatCode === "") {
             return next({
                 message: "seatCode is required!",
@@ -100,30 +86,16 @@ exports.updateSeat = async (req, res, next) => {
                 statusCode: 400,
             });
         }
-        if (!seatType || seatType === "") {
-            return next({
-                message: "seatType is required!",
-                statusCode: 400,
-            });
-        }
         if (!flightId || flightId === "") {
             return next({
                 message: "flightId is required!",
                 statusCode: 400,
             });
         }
-        if (!price || price === "") {
-            return next({
-                message: "price is required!",
-                statusCode: 400,
-            });
-        }
         const data = await seatUsecase.updateSeat(id, {
             seatCode,
             seatAvailable,
-            seatType,
             flightId,
-            price,
         });
         res.status(200).json({
             message: "success",

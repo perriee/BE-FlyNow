@@ -19,9 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             seatCode: DataTypes.STRING,
             seatAvailable: DataTypes.BOOLEAN,
-            seatType: DataTypes.ENUM("economy", "business", "first_class"),
             flightId: DataTypes.INTEGER,
-            price: DataTypes.BIGINT,
             deletedAt: DataTypes.DATE,
         },
         {

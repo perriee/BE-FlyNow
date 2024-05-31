@@ -1,4 +1,17 @@
-const { register, login } = require("../usecase/auth");
+const bcrypt = require("bcrypt");
+const { sendEmail } = require("../helper/nodemailer");
+const {
+    register,
+    login,
+    googleLogin,
+    updateUserResetPwdToken,
+    getUserByEmail,
+    getUserByResetPwdToken,
+    updateUserPassword,
+} = require("../usecase/auth");
+const { createToken } = require("../usecase/auth/util");
+
+const { CLIENT_URL, MAIL_USERNAME } = process.env;
 
 exports.register = async (req, res, next) => {
     try {
@@ -40,10 +53,11 @@ exports.register = async (req, res, next) => {
             password,
             image,
             phoneNumber,
+            isVerified: false,
         });
 
         res.status(201).json({
-            message: "User created successfully",
+            message: "Register Successful",
             data,
         });
     } catch (error) {
@@ -83,6 +97,30 @@ exports.login = async (req, res, next) => {
     }
 };
 
+exports.googleLogin = async (req, res, next) => {
+    try {
+        // get the body
+        const { access_token } = req.body;
+
+        if (!access_token) {
+            return next({
+                statusCode: 400,
+                message: "Access token must be provided!",
+            });
+        }
+
+        // login with google logic
+        const data = await googleLogin(access_token);
+
+        res.status(200).json({
+            message: "Success",
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.profile = async (req, res, next) => {
     try {
         // get user by id
@@ -91,6 +129,88 @@ exports.profile = async (req, res, next) => {
         res.status(200).json({
             message: "User Profile retrieved successfully",
             data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.forgotPassword = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+
+        const user = await getUserByEmail(email);
+
+        if (!user) {
+            return next({
+                message: `User is not found`,
+                statusCode: 400,
+            });
+        }
+        if (!user.isVerified) {
+            return next({
+                message: `User is not verified`,
+                statusCode: 400,
+            });
+        }
+
+        const { id } = user;
+        const { token } = createToken(id);
+
+        await updateUserResetPwdToken(id, {
+            resetPasswordToken: token,
+        });
+
+        const emailTemplate = {
+            from: {
+                name: "FlyNow Support",
+                address: MAIL_USERNAME,
+            },
+            to: email,
+            subject: "Link Reset Password",
+            html: `<p>Silahkan klik link dibawah ini untuk reset password</p> <p>${CLIENT_URL}/reset-password/${token}</p>`,
+        };
+
+        sendEmail(emailTemplate);
+
+        return res.status(200).json({
+            message: "Reset Password Link Successfully Sent",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.resetPassword = async (req, res, next) => {
+    try {
+        const { token, password, confirmPassword } = req.body;
+
+        const user = await getUserByResetPwdToken(token);
+        const { id } = user;
+
+        if (password !== confirmPassword) {
+            return next({
+                message: `Password does not match`,
+                statusCode: 400,
+            });
+        }
+        if (!user) {
+            return next({
+                message: `User doesn't exist`,
+                statusCode: 400,
+            });
+        }
+
+        // update user password
+        await updateUserPassword(token, password);
+
+        // set resetPasswordToken to null when user already update the password
+        await updateUserResetPwdToken(id, {
+            resetPasswordToken: null,
+        });
+
+        return res.status(200).json({
+            message: "Password successfully changed",
         });
     } catch (error) {
         next(error);

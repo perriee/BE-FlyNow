@@ -17,11 +17,6 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.BOOLEAN,
             },
-            seatType: {
-                allowNull: false,
-                type: Sequelize.ENUM("economy", "business", "first_class"),
-                defaultValue: "economy",
-            },
             flightId: {
                 allowNull: false,
                 type: Sequelize.INTEGER,
@@ -29,10 +24,6 @@ module.exports = {
                     model: { tableName: "flights" },
                     key: "id",
                 },
-            },
-            price: {
-                allowNull: false,
-                type: Sequelize.BIGINT,
             },
             deletedAt: {
                 allowNull: true,
