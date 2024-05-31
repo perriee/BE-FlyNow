@@ -15,6 +15,11 @@ module.exports = (sequelize, DataTypes) => {
             booking.belongsToMany(models.seat, {
                 through: "bookingDetail",
             });
+            booking.hasMany(models.bookingDetail, {
+                foreignKey: "bookingId",
+                as: "bookingDetails",
+            });
+
             booking.hasOne(models.payment, { foreignKey: "bookingId" });
             booking.belongsTo(models.user, { foreignKey: "userId" });
             booking.belongsTo(models.flight, { foreignKey: "flightId" });

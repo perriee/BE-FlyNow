@@ -8,6 +8,8 @@ const {
     googleLogin,
     forgotPassword,
     resetPassword,
+    verifyOTP,
+    resendOTP,
 } = require("../controller/auth");
 const {
     authMiddleware,
@@ -20,5 +22,7 @@ router.post("/google-login", googleLogin);
 router.get("/profile", authMiddleware(), profile);
 router.put("/forgot-password", forgotPassword);
 router.put("/reset-password", verifyResetPasswordToken(), resetPassword);
+router.put("/resend-otp", resendOTP);
+router.put("/verify-otp", verifyOTP);
 
 module.exports = router;
