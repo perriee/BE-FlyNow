@@ -49,49 +49,49 @@ exports.createPassenger = async (req, res, next) => {
         if (!name || name == "") {
             return next({
                 message: "name must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!dateOfBirth || dateOfBirth == "") {
             return next({
                 message: "dateOfBirth must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!nationality || nationality == "") {
             return next({
                 message: "nationality must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!docType || docType == "") {
             return next({
                 message: "docType must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!docNumber || docNumber == "") {
             return next({
                 message: "docNumber must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!issuingCountry || issuingCountry == "") {
             return next({
                 message: "issuingCountry must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!expiryDate || expiryDate == "") {
             return next({
                 message: "expiryDate must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!passengerType || passengerType == "") {
             return next({
                 message: "passengerType must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
 
@@ -133,49 +133,49 @@ exports.updatePassenger = async (req, res, next) => {
         if (!name || name == "") {
             return next({
                 message: "name must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!dateOfBirth || dateOfBirth == "") {
             return next({
                 message: "dateOfBirth must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!nationality || nationality == "") {
             return next({
                 message: "nationality must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!docType || docType == "") {
             return next({
                 message: "docType must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!docNumber || docNumber == "") {
             return next({
                 message: "docNumber must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!issuingCountry || issuingCountry == "") {
             return next({
                 message: "issuingCountry must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!expiryDate || expiryDate == "") {
             return next({
                 message: "expiryDate must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
         if (!passengerType || passengerType == "") {
             return next({
                 message: "passengerType must be provided!",
-                statusCode: 404,
+                statusCode: 400,
             });
         }
 
