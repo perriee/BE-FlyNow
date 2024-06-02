@@ -42,8 +42,8 @@ exports.createBooking = async (req, res, next) => {
             returnFlightId = null,
             userId,
             numAdults,
-            numChildren,
-            numBabies,
+            numChildren = null,
+            numBabies = null,
             passangers,
         } = req.body;
 
@@ -71,6 +71,7 @@ exports.createBooking = async (req, res, next) => {
                 statusCode: 400,
             });
         }
+
         if (numChildren && typeof numChildren !== "number") {
             return next({
                 message: "Number Children must be number",
