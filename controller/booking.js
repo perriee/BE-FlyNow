@@ -53,7 +53,7 @@ exports.createBooking = async (req, res, next) => {
                 statusCode: 400,
             });
         }
-        if (!flightId || flightId === "") {
+        if (!departureFlightId || departureFlightId === "") {
             return next({
                 message: "Departure Flight Id must be filled",
                 statusCode: 400,
