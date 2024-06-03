@@ -43,60 +43,115 @@ exports.createBooking = async (req, res, next) => {
             numAdults,
             numChildren,
             numBabies,
+            passangers,
         } = req.body;
 
-        if (!bookingCode || bookingCode == "") {
+        if (!bookingCode || bookingCode === "") {
             return next({
                 message: "Booking Code must be filled",
                 statusCode: 400,
             });
         }
-        if (!flightId || flightId == "") {
+        if (!flightId || flightId === "") {
             return next({
                 message: "Flight Id must be filled",
                 statusCode: 400,
             });
         }
-        if (!userId || userId == "") {
+        if (!userId || userId === "") {
             return next({
                 message: "User Id must be filled",
                 statusCode: 400,
             });
         }
-        if (!numAdults || numAdults == "") {
+        if (!numAdults || numAdults === "") {
             return next({
                 message: "Number Adults must be filled",
                 statusCode: 400,
             });
         }
-        //   if (!numChildren || numChildren == "") {
-        //       return next({
-        //           message: "Number Children must be filled",
-        //           statusCode: 400,
-        //       });
-        //   }
-        //   if (!numBabies || numBabies == "") {
-        //       return next({
-        //           message: "Number Babies must be filled",
-        //           statusCode: 400,
-        //       });
-        //   }
 
-        const data = await bookingUsecase.createBooking({
-            bookingCode,
-            flightId,
-            userId,
-            numAdults,
-            numChildren,
-            numBabies,
+        // eslint-disable-next-line consistent-return
+        passangers.forEach((passanger) => {
+            const {
+                name,
+                dateOfBirth,
+                nationality,
+                docType,
+                docNumber,
+                issuingCountry,
+                expiryDate,
+                passengerType,
+            } = passanger;
+
+            if (!name || name === "") {
+                return next({
+                    message: "name must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!dateOfBirth || dateOfBirth === "") {
+                return next({
+                    message: "dateOfBirth must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!nationality || nationality === "") {
+                return next({
+                    message: "nationality must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!docType || docType === "") {
+                return next({
+                    message: "docType must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!docNumber || docNumber === "") {
+                return next({
+                    message: "docNumber must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!issuingCountry || issuingCountry === "") {
+                return next({
+                    message: "issuingCountry must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!expiryDate || expiryDate === "") {
+                return next({
+                    message: "expiryDate must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!passengerType || passengerType === "") {
+                return next({
+                    message: "passengerType must be provided!",
+                    statusCode: 400,
+                });
+            }
         });
 
-        res.status(200).json({
+        const data = await bookingUsecase.createBooking({
+            bookingData: {
+                bookingCode,
+                flightId,
+                userId,
+                numAdults,
+                numChildren,
+                numBabies,
+            },
+            passangersData: passangers,
+        });
+
+        return res.status(200).json({
             message: "Success",
             data,
         });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 };
 
