@@ -24,10 +24,10 @@ INSERT INTO public.flights ("flightCode", terminal, "departureAirportId", "arriv
 ('UA300', 'T3', 3, 1, 3, 950000, '2024-06-03 10:00:00+00', '2024-06-03 13:00:00+00', 'Non-stop', NOW(), NOW());
 
 -- Insert dummy data into bookings
-INSERT INTO public.bookings ("bookingCode", "flightId", "userId", "numAdults", "numChildren", "numBabies", "createdAt", "updatedAt") VALUES
-('BK001', 1, 1, 2, 1, 0, NOW(), NOW()),
-('BK002', 2, 2, 1, 0, 1, NOW(), NOW()),
-('BK003', 3, 3, 1, 1, 1, NOW(), NOW());
+INSERT INTO public.bookings ("bookingCode", "departureFlightId", "returnFlightId", "userId", "numAdults", "numChildren", "numBabies", "createdAt", "updatedAt") VALUES
+('BK001', 1, 2, 1, 2, 1, 0, NOW(), NOW()),
+('BK002', 2, 1, 2, 1, 0, 1, NOW(), NOW()),
+('BK003', 3, 1, 3, 1, 1, 1, NOW(), NOW());
 
 -- Insert dummy data into passengers
 INSERT INTO public.passengers (name, "dateOfBirth", nationality, "docType", "docNumber", "issuingCountry", "expiryDate", "passengerType", "createdAt", "updatedAt") VALUES

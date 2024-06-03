@@ -38,11 +38,12 @@ exports.createBooking = async (req, res, next) => {
     try {
         const {
             bookingCode,
-            flightId,
+            departureFlightId,
+            returnFlightId = null,
             userId,
             numAdults,
-            numChildren,
-            numBabies,
+            numChildren = null,
+            numBabies = null,
             passangers,
         } = req.body;
 
@@ -52,9 +53,9 @@ exports.createBooking = async (req, res, next) => {
                 statusCode: 400,
             });
         }
-        if (!flightId || flightId === "") {
+        if (!departureFlightId || departureFlightId === "") {
             return next({
-                message: "Flight Id must be filled",
+                message: "Departure Flight Id must be filled",
                 statusCode: 400,
             });
         }
@@ -67,6 +68,20 @@ exports.createBooking = async (req, res, next) => {
         if (!numAdults || numAdults === "") {
             return next({
                 message: "Number Adults must be filled",
+                statusCode: 400,
+            });
+        }
+
+        if (numChildren && typeof numChildren !== "number") {
+            return next({
+                message: "Number Children must be number",
+                statusCode: 400,
+            });
+        }
+
+        if (numBabies && typeof numBabies !== "number") {
+            return next({
+                message: "Number Babies must be filled",
                 statusCode: 400,
             });
         }
@@ -137,7 +152,8 @@ exports.createBooking = async (req, res, next) => {
         const data = await bookingUsecase.createBooking({
             bookingData: {
                 bookingCode,
-                flightId,
+                departureFlightId,
+                returnFlightId,
                 userId,
                 numAdults,
                 numChildren,

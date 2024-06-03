@@ -22,13 +22,31 @@ module.exports = (sequelize, DataTypes) => {
 
             booking.hasOne(models.payment, { foreignKey: "bookingId" });
             booking.belongsTo(models.user, { foreignKey: "userId" });
-            booking.belongsTo(models.flight, { foreignKey: "flightId" });
+            booking.belongsTo(models.flight, {
+                foreignKey: "departureFlightId",
+            });
+            booking.belongsTo(models.flight, { foreignKey: "returnFlightId" });
         }
     }
     booking.init(
         {
             bookingCode: DataTypes.STRING,
-            flightId: DataTypes.BIGINT,
+            departureFlightId: {
+                allowNull: false,
+                type: DataTypes.BIGINT,
+                references: {
+                    model: "flight",
+                    key: "id",
+                },
+            },
+            returnFlightId: {
+                allowNull: true,
+                type: DataTypes.BIGINT,
+                references: {
+                    model: "flight",
+                    key: "id",
+                },
+            },
             userId: DataTypes.BIGINT,
             numAdults: DataTypes.INTEGER,
             numChildren: DataTypes.INTEGER,

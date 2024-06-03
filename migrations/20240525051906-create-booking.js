@@ -13,7 +13,17 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.STRING,
             },
-            flightId: {
+            departureFlightId: {
+                allowNull: false,
+                type: Sequelize.BIGINT,
+                references: {
+                    model: {
+                        tableName: "flights",
+                    },
+                    key: "id",
+                },
+            },
+            returnFlightId: {
                 allowNull: false,
                 type: Sequelize.BIGINT,
                 references: {
