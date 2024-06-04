@@ -17,7 +17,7 @@ module.exports = {
                     key: "id",
                 },
             },
-            passangerId: {
+            passengerId: {
                 type: Sequelize.INTEGER,
                 references: {
                     model: {
@@ -51,6 +51,6 @@ module.exports = {
     },
     // eslint-disable-next-line no-unused-vars
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable("bookings_passangers");
+        await queryInterface.dropTable("bookings_passengers");
     },
 };

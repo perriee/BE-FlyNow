@@ -1,4 +1,4 @@
-const { Model } = require("sequelize");
+const { Model, ENUM } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
     class flight extends Model {
@@ -10,12 +10,15 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
             flight.hasMany(models.seat, { foreignKey: "flightId" });
-            flight.hasMany(models.booking, { foreignKey: "flightId" });
+            flight.hasMany(models.booking, { foreignKey: "departureFlightId" });
+            flight.hasMany(models.booking, { foreignKey: "returnFlightId" });
             flight.belongsTo(models.airline, { foreignKey: "airlineId" });
             flight.belongsTo(models.airport, {
+                as: 'departureAirport',
                 foreignKey: "departureAirportId",
             });
             flight.belongsTo(models.airport, {
+                as: 'arrivalAirport',
                 foreignKey: "arrivalAirportId",
             });
         }
@@ -60,6 +63,14 @@ module.exports = (sequelize, DataTypes) => {
             },
             arrivalTime: {
                 type: DataTypes.DATE,
+                allowNull: false,
+            },
+            price: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            flightClass: {
+                type: ENUM("economy", "business", "first_class"),
                 allowNull: false,
             },
             information: {
