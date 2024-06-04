@@ -5,7 +5,7 @@ const { authMiddleware } = require("../middleware/auth");
 
 router
     .route("/")
-    .get(authMiddleware(), bookingController.getBookings)
+    .get(bookingController.getBookings)
     .post(authMiddleware(), bookingController.createBooking);
 
 router
