@@ -1,9 +1,9 @@
-const { payment } = require('../../models')
+const { payment } = require("../../models");
 
 exports.getPayments = async () => {
-    const data = await payment.findAll()
-    return data
-}
+    const data = await payment.findAll();
+    return data;
+};
 
 // exports.getPaymentById = async (id) => {
 //     const data = await payment.findAll({ where: { id } })
@@ -11,9 +11,9 @@ exports.getPayments = async () => {
 // }
 
 exports.getPaymentByBookingId = async (bookingId) => {
-    const data = await payment.findAll({ where: { bookingId } })
-    return data
-}
+    const data = await payment.findOne({ where: { bookingId } });
+    return data;
+};
 
 exports.createPayment = async (payload) => {
     const data = await payment.create({
@@ -21,18 +21,18 @@ exports.createPayment = async (payload) => {
         paymentAmount: payload.paymentAmount,
         paymenMethod: payload.paymentMethod,
         paymentStatus: payload.paymentStatus,
-    })
-    return data
-}
+    });
+    return data;
+};
 
 exports.deletePayment = async (id) => {
-    const data = await payment.destroy({ where: { id } })
-    return data
-}
+    const data = await payment.destroy({ where: { id } });
+    return data;
+};
 
 exports.updatePayment = async (payload) => {
-    const { paymentAmount, paymentMethod, paymentStatus, bookingId } = payload
-    const currentData = await this.getPaymentByBookingId(bookingId)
+    const { paymentAmount, paymentMethod, paymentStatus, bookingId } = payload;
+    const currentData = await this.getPaymentByBookingId(bookingId);
 
     if (currentData.length) {
         const newData = await payment.update(
@@ -46,9 +46,9 @@ exports.updatePayment = async (payload) => {
                     bookingId,
                 },
             },
-        )
-        return newData
+        );
+        return newData;
     } else {
-        throw new Error(`Booking with id ${bookingId} is not found`)
+        throw new Error(`Booking with id ${bookingId} is not found`);
     }
-}
+};
