@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 const { sequelize } = require("../../models");
 const bookingRepo = require("../../repository/booking");
-const passangerRepo = require("../../repository/passenger");
+const passengerRepo = require("../../repository/passenger");
 const bookingDetailUseCase = require("../bookingDetail");
 
 exports.getBookings = async () => {
@@ -15,13 +15,13 @@ exports.getBookingId = async (id) => {
 };
 
 exports.createBooking = async (payload) => {
-    const { bookingPayload, passangerPayloads, seatPayloads } = payload;
+    const { bookingPayload, passengerPayloads, seatPayloads } = payload;
 
     const t = await sequelize.transaction();
 
     try {
-        const passangersResult =
-            await passangerRepo.createBulkPassenger(passangerPayloads);
+        const passengersResult =
+            await passengerRepo.createBulkPassenger(passengerPayloads);
 
         const bookingResult = await bookingRepo.createBooking(bookingPayload);
 
@@ -42,7 +42,7 @@ exports.createBooking = async (payload) => {
         let departureSeatIndex = 0;
         let returnSeatIndex = 0;
 
-        passangersResult.forEach((passanger) => {
+        passengersResult.forEach((passenger) => {
             if (
                 seatPayloads.departureSeats.length > 0 &&
                 departureSeatIndex < seatPayloads.departureSeats.length
@@ -52,7 +52,7 @@ exports.createBooking = async (payload) => {
                 bookingDetailPayload.push({
                     bookingId,
                     flightId: departureFlightId,
-                    passengerId: passanger.id,
+                    passengerId: passenger.id,
                     seatCode,
                 });
                 departureSeatIndex++;
@@ -66,7 +66,7 @@ exports.createBooking = async (payload) => {
                 bookingDetailPayload.push({
                     bookingId,
                     flightId: returnFlightId,
-                    passengerId: passanger.id,
+                    passengerId: passenger.id,
                     seatCode,
                 });
 
@@ -80,7 +80,7 @@ exports.createBooking = async (payload) => {
             );
 
         return {
-            passangersResult,
+            passengersResult,
             bookingResult,
             bookingDetailsResult,
         };
@@ -92,13 +92,13 @@ exports.createBooking = async (payload) => {
 
 // V2
 // exports.createBooking = async (payload) => {
-//     const { bookingPayload, passangerPayloads } = payload;
+//     const { bookingPayload, passengerPayloads } = payload;
 
 //     const t = await sequelize.transaction();
 
 //     try {
-//         const passangersResult =
-//             await passangerRepo.createBulkPassenger(passangerPayloads);
+//         const passengersResult =
+//             await passengerRepo.createBulkPassenger(passengerPayloads);
 
 //         const bookingResult = await bookingRepo.createBooking(bookingPayload);
 
@@ -116,38 +116,38 @@ exports.createBooking = async (payload) => {
 //             returnDetail: [],
 //         };
 
-//         passangerPayloads.forEach(async (passanger) => {
-//             if (passanger?.departureSeatCode) {
+//         passengerPayloads.forEach(async (passenger) => {
+//             if (passenger?.departureSeatCode) {
 //                 const result = await bookingDetailsUseCase.createBookingDetail({
 //                     bookingId,
 //                     flightId: departureFlightId,
-//                     passengerId: passanger.id,
+//                     passengerId: passenger.id,
 //                     // RECHECK: yang dikirim ke client itu seatId atau seatCode?
-//                     seatCode: passanger?.departureSeatCode,
+//                     seatCode: passenger?.departureSeatCode,
 //                 });
 //                 bookingDetailsResult.departureDetail.push({
 //                     ...result,
-//                     seatCode: passanger?.departureSeatCode,
+//                     seatCode: passenger?.departureSeatCode,
 //                 });
 //             }
 
-//             if (passanger?.returnSeatCode) {
+//             if (passenger?.returnSeatCode) {
 //                 const result = await bookingDetailsUseCase.createBookingDetail({
 //                     bookingId,
 //                     flightId: returnFlightId,
-//                     passengerId: passanger.id,
+//                     passengerId: passenger.id,
 //                     // RECHECK: yang dikirim ke client itu seatId atau seatCode?
-//                     seatCode: passanger?.returnSeatCode,
+//                     seatCode: passenger?.returnSeatCode,
 //                 });
 //                 bookingDetailsResult.returnDetail.push({
 //                     ...result,
-//                     seatCode: passanger?.returnSeatCode,
+//                     seatCode: passenger?.returnSeatCode,
 //                 });
 //             }
 //         });
 
 //         return {
-//             passangersResult,
+//             passengersResult,
 //             bookingResult,
 //             bookingDetailsResult,
 //         };

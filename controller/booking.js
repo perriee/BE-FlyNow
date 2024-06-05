@@ -44,7 +44,7 @@ exports.createBooking = async (req, res, next) => {
             numAdults,
             numChildren = null,
             numBabies = null,
-            passangerPayloads,
+            passengerPayloads,
             seatPayloads,
         } = req.body;
 
@@ -88,7 +88,7 @@ exports.createBooking = async (req, res, next) => {
         }
 
         // eslint-disable-next-line consistent-return
-        passangerPayloads.forEach((passanger) => {
+        passengerPayloads.forEach((passenger) => {
             const {
                 name,
                 dateOfBirth,
@@ -98,7 +98,7 @@ exports.createBooking = async (req, res, next) => {
                 issuingCountry,
                 expiryDate,
                 passengerType,
-            } = passanger;
+            } = passenger;
 
             if (!name || name === "") {
                 return next({
@@ -160,7 +160,7 @@ exports.createBooking = async (req, res, next) => {
                 numChildren,
                 numBabies,
             },
-            passangerPayloads,
+            passengerPayloads,
             seatPayloads,
         });
 
@@ -185,7 +185,7 @@ exports.createBooking = async (req, res, next) => {
             numAdults,
             numChildren = null,
             numBabies = null,
-            passangerPayloads,
+            passengerPayloads,
             seatPayloads,
         } = req.body;
 
@@ -229,7 +229,7 @@ exports.createBooking = async (req, res, next) => {
         }
 
         // eslint-disable-next-line consistent-return
-        passangerPayloads.forEach((passanger) => {
+        passengerPayloads.forEach((passenger) => {
             const {
                 name,
                 dateOfBirth,
@@ -239,7 +239,7 @@ exports.createBooking = async (req, res, next) => {
                 issuingCountry,
                 expiryDate,
                 passengerType,
-            } = passanger;
+            } = passenger;
 
             if (!name || name === "") {
                 return next({
@@ -301,7 +301,7 @@ exports.createBooking = async (req, res, next) => {
                 numChildren,
                 numBabies,
             },
-            passangerPayloads,
+            passengerPayloads,
             seatPayloads,
         });
 
