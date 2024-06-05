@@ -35,6 +35,23 @@ exports.getBookingId = async (id) => {
     return data;
 };
 
+exports.getBookingByUserId = async (userId) => {
+    const data = await booking.findAll({
+        include: [
+            {
+                model: user,
+                attributes: ["id", "name", "email", "image", "phoneNumber"],
+            },
+            {
+                model: flight,
+            },
+        ],
+        where: { userId },
+    });
+
+    return data;
+};
+
 exports.createBooking = async (payload) => {
     const data = await booking.create(payload);
     return data;
