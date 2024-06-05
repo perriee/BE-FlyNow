@@ -44,7 +44,8 @@ exports.createBooking = async (req, res, next) => {
             numAdults,
             numChildren = null,
             numBabies = null,
-            passangers,
+            passangerPayloads,
+            seatPayloads,
         } = req.body;
 
         if (!bookingCode || bookingCode === "") {
@@ -87,7 +88,7 @@ exports.createBooking = async (req, res, next) => {
         }
 
         // eslint-disable-next-line consistent-return
-        passangers.forEach((passanger) => {
+        passangerPayloads.forEach((passanger) => {
             const {
                 name,
                 dateOfBirth,
@@ -150,7 +151,7 @@ exports.createBooking = async (req, res, next) => {
         });
 
         const data = await bookingUsecase.createBooking({
-            bookingData: {
+            bookingPayload: {
                 bookingCode,
                 departureFlightId,
                 returnFlightId,
@@ -159,7 +160,8 @@ exports.createBooking = async (req, res, next) => {
                 numChildren,
                 numBabies,
             },
-            passangersData: passangers,
+            passangerPayloads,
+            seatPayloads,
         });
 
         return res.status(200).json({
@@ -170,6 +172,148 @@ exports.createBooking = async (req, res, next) => {
         return next(error);
     }
 };
+
+// v2
+/** 
+exports.createBooking = async (req, res, next) => {
+    try {
+        const {
+            bookingCode,
+            departureFlightId,
+            returnFlightId = null,
+            userId,
+            numAdults,
+            numChildren = null,
+            numBabies = null,
+            passangerPayloads,
+            seatPayloads,
+        } = req.body;
+
+        if (!bookingCode || bookingCode === "") {
+            return next({
+                message: "Booking Code must be filled",
+                statusCode: 400,
+            });
+        }
+        if (!departureFlightId || departureFlightId === "") {
+            return next({
+                message: "Departure Flight Id must be filled",
+                statusCode: 400,
+            });
+        }
+        if (!userId || userId === "") {
+            return next({
+                message: "User Id must be filled",
+                statusCode: 400,
+            });
+        }
+        if (!numAdults || numAdults === "") {
+            return next({
+                message: "Number Adults must be filled",
+                statusCode: 400,
+            });
+        }
+
+        if (numChildren && typeof numChildren !== "number") {
+            return next({
+                message: "Number Children must be number",
+                statusCode: 400,
+            });
+        }
+
+        if (numBabies && typeof numBabies !== "number") {
+            return next({
+                message: "Number Babies must be filled",
+                statusCode: 400,
+            });
+        }
+
+        // eslint-disable-next-line consistent-return
+        passangerPayloads.forEach((passanger) => {
+            const {
+                name,
+                dateOfBirth,
+                nationality,
+                docType,
+                docNumber,
+                issuingCountry,
+                expiryDate,
+                passengerType,
+            } = passanger;
+
+            if (!name || name === "") {
+                return next({
+                    message: "name must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!dateOfBirth || dateOfBirth === "") {
+                return next({
+                    message: "dateOfBirth must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!nationality || nationality === "") {
+                return next({
+                    message: "nationality must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!docType || docType === "") {
+                return next({
+                    message: "docType must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!docNumber || docNumber === "") {
+                return next({
+                    message: "docNumber must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!issuingCountry || issuingCountry === "") {
+                return next({
+                    message: "issuingCountry must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!expiryDate || expiryDate === "") {
+                return next({
+                    message: "expiryDate must be provided!",
+                    statusCode: 400,
+                });
+            }
+            if (!passengerType || passengerType === "") {
+                return next({
+                    message: "passengerType must be provided!",
+                    statusCode: 400,
+                });
+            }
+        });
+
+        const data = await bookingUsecase.createBooking({
+            bookingPayload: {
+                bookingCode,
+                departureFlightId,
+                returnFlightId,
+                userId,
+                numAdults,
+                numChildren,
+                numBabies,
+            },
+            passangerPayloads,
+            seatPayloads,
+        });
+
+        return res.status(200).json({
+            message: "Success",
+            data,
+        });
+    } catch (error) {
+        return next(error);
+    }
+};
+*/
 
 exports.updateBooking = async (req, res, next) => {
     try {

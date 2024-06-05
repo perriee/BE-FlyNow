@@ -48,6 +48,11 @@ exports.createBookingDetail = async (payload) => {
     return data;
 };
 
+exports.createBulkBookingDetail = async (payload) => {
+    const data = await bookingDetail.bulkCreate(payload);
+    return data;
+};
+
 exports.updateBookingDetail = async (id, payload) => {
     await bookingDetail.update(payload, {
         where: {
