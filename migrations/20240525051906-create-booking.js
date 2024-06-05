@@ -24,7 +24,7 @@ module.exports = {
                 },
             },
             returnFlightId: {
-                allowNull: false,
+                allowNull: true,
                 type: Sequelize.BIGINT,
                 references: {
                     model: {
