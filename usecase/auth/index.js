@@ -6,8 +6,8 @@ const {
     getUserByEmail,
     getGoogleAccessTokenData,
     getUserByResetPwdToken,
-    updateUserResetPwdToken,
     updateUserPassword,
+    updateUser,
 } = require("../../repository/user");
 const { createToken } = require("./util");
 
@@ -134,11 +134,21 @@ exports.getUserByResetPwdToken = async (token) => {
 };
 
 exports.updateUserResetPwdToken = async (id, payload) => {
-    const data = await updateUserResetPwdToken(id, payload);
+    const data = await updateUser(id, payload);
     return data;
 };
 
 exports.updateUserPassword = async (token, newPassword) => {
     const data = await updateUserPassword(token, newPassword);
+    return data;
+};
+
+exports.updateUserIsVerified = async (id, payload) => {
+    const data = await updateUser(id, payload);
+    return data;
+};
+
+exports.updateUserOTP = async (id, payload) => {
+    const data = await updateUser(id, payload);
     return data;
 };

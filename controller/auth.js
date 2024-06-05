@@ -8,8 +8,11 @@ const {
     getUserByEmail,
     getUserByResetPwdToken,
     updateUserPassword,
+    updateUserIsVerified,
+    updateUserOTP,
 } = require("../usecase/auth");
 const { createToken } = require("../usecase/auth/util");
+const { generateOTP, checkOTP } = require("../helper/otp");
 
 const { CLIENT_URL, MAIL_USERNAME } = process.env;
 
@@ -20,6 +23,11 @@ exports.register = async (req, res, next) => {
 
         // get the image
         const image = req?.files?.image;
+
+        // generate OTP
+        const otpData = generateOTP();
+        const otp = otpData.code;
+        const otpCreatedAt = otpData.createdAt;
 
         // validate request
         if (!name || name == "") {
@@ -54,6 +62,8 @@ exports.register = async (req, res, next) => {
             image,
             phoneNumber,
             isVerified: false,
+            otp,
+            otpCreatedAt,
         });
 
         res.status(201).json({
@@ -168,7 +178,10 @@ exports.forgotPassword = async (req, res, next) => {
             },
             to: email,
             subject: "Link Reset Password",
-            html: `<p>Silahkan klik link dibawah ini untuk reset password</p> <p>${CLIENT_URL}/reset-password/${token}</p>`,
+            html: `
+                <p>Silahkan klik link dibawah ini untuk reset password</p> 
+                <p>${CLIENT_URL}/reset-password/${token}</p>
+            `,
         };
 
         sendEmail(emailTemplate);
@@ -211,6 +224,108 @@ exports.resetPassword = async (req, res, next) => {
 
         return res.status(200).json({
             message: "Password successfully changed",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.resendOTP = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+
+        // generate new OTP
+        const otpData = generateOTP();
+        const otp = otpData.code;
+        const otpCreatedAt = otpData.createdAt;
+
+        const user = await getUserByEmail(email);
+
+        if (!user) {
+            return next({
+                message: `User is not found`,
+                statusCode: 400,
+            });
+        }
+        if (user.isVerified) {
+            return next({
+                message: `User has been verified`,
+                statusCode: 400,
+            });
+        }
+
+        // Update user otp data
+        await updateUserOTP(user.id, {
+            otp,
+            otpCreatedAt,
+        });
+
+        const emailTemplate = {
+            from: {
+                name: "FlyNow Support",
+                address: MAIL_USERNAME,
+            },
+            to: email,
+            subject: "Kode Verifikasi Email (OTP)",
+            html: `
+                <p>Silahkan masukkan OTP di bawah ini untuk memverifikasi email kamu</p> 
+                <p><b>${otp}</b></p>
+                <p><i>Kode OTP hanya berlaku 30 menit dan bersifat rahasia. Mohon untuk tidak membagikan kode ini kepada siapapun termasuk pihak yang mengatasnamakan FlyNow.</i></p>`,
+        };
+
+        sendEmail(emailTemplate);
+
+        return res.status(200).json({
+            message: "New OTP has been sent to your email",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.verifyOTP = async (req, res, next) => {
+    try {
+        const { email, otp } = req.body;
+
+        const user = await getUserByEmail(email);
+
+        if (!user) {
+            return next({
+                message: `User doesn't exist`,
+                statusCode: 400,
+            });
+        }
+
+        // check if otp is valid
+        try {
+            checkOTP(otp, user.otp, user.otpCreatedAt);
+        } catch (error) {
+            if (error.message === "Invalid OTP") {
+                return next({
+                    message: "The provided OTP is invalid.",
+                    statusCode: 400,
+                });
+            } else if (error.message === "OTP Expired") {
+                return next({
+                    message: "The OTP has expired.",
+                    statusCode: 400,
+                });
+            } else {
+                return next({
+                    message: "An unexpected error occurred.",
+                    statusCode: 500,
+                });
+            }
+        }
+
+        // if otp is valid, set isVerified to true
+        await updateUserIsVerified(user.id, { isVerified: true });
+
+        // set otp and otpCreatedAt to null when user already verify
+        await updateUserOTP(user.id, { otp: null, otpCreatedAt: null });
+
+        return res.status(200).json({
+            message: "User already verified",
         });
     } catch (error) {
         next(error);
