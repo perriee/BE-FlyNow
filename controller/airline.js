@@ -20,13 +20,13 @@ exports.createAirline = async (req, res, next) => {
             });
         }
 
-        if (!airlineCode || airlineCode == "") {
+        if (!airlineCode || airlineCode === "") {
             return next({
                 message: "airlineCode is required",
                 statusCode: 400,
             });
         }
-        if (!airlineName || airlineName == "") {
+        if (!airlineName || airlineName === "") {
             return next({
                 message: "airlineName is required",
                 statusCode: 400,
@@ -92,13 +92,13 @@ exports.updateAirlineById = async (req, res, next) => {
             });
         }
 
-        if (!airlineCode || airlineCode == "") {
+        if (!airlineCode || airlineCode === "") {
             return next({
                 message: "airlineCode is required",
                 statusCode: 400,
             });
         }
-        if (!airlineName || airlineName == "") {
+        if (!airlineName || airlineName === "") {
             return next({
                 message: "airlineName is required",
                 statusCode: 400,
