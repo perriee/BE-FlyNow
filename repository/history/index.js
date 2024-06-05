@@ -22,14 +22,26 @@ exports.getHistories = async (userId) => {
         where: { userId },
     });
 
-    const bookingDetail = bookings.map(async (booking, index) => {
-        const detail = await bookingDetail.findAll({
-            where: {
-                bookingId: booking.id,
-            },
-            include: [{ model: passenger }],
-        });
-    });
+    const data = await Promise.all(
+        bookings.map(async (bookingInstance, index) => {
+            const bookingPlain = bookingInstance.get({ plain: true });
 
-    return booking;
+            const bookingDetail = await bookingDetail.findAll({
+                where: {
+                    bookingId: bookingPlain.id,
+                },
+            });
+
+            const payments = await payment.fin;
+
+            return {
+                ...bookingPlain,
+                details: bookingDetail.map((detail) =>
+                    detail.get({ plain: true }),
+                ),
+            };
+        }),
+    );
+
+    return data;
 };
