@@ -43,8 +43,37 @@ exports.getBookingDetailById = async (id) => {
     return data;
 };
 
+exports.getBookingDetailByBookingId = async (bookingId) => {
+    const data = await bookingDetail.findAll({
+        where: {
+            bookingId,
+        },
+        include: [
+            {
+                model: booking,
+                as: "booking",
+            },
+            {
+                model: passenger,
+                as: "passenger",
+            },
+            {
+                model: seat,
+                as: "seat",
+            },
+        ],
+    });
+
+    return data;
+};
+
 exports.createBookingDetail = async (payload) => {
     const data = await bookingDetail.create(payload);
+    return data;
+};
+
+exports.createBulkBookingDetail = async (payload) => {
+    const data = await bookingDetail.bulkCreate(payload);
     return data;
 };
 
