@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const { seat, flight } = require("../../models");
 
 exports.getSeats = async () => {
