@@ -1,10 +1,10 @@
 /* eslint-disable no-plusplus */
+const { Transaction } = require("sequelize");
+
 const { sequelize } = require("../../models");
 const bookingRepo = require("../../repository/booking");
 const passengerRepo = require("../../repository/passenger");
 const bookingDetailUseCase = require("../bookingDetail");
-
-
 
 exports.getBookings = async () => {
     const data = await bookingRepo.getBookings();
@@ -20,15 +20,20 @@ exports.getBookingId = async (id) => {
 exports.createBooking = async (payload) => {
     const { bookingPayload, passengerPayloads, seatPayloads } = payload;
 
-    const t = await sequelize.transaction();
+    const t = await sequelize.transaction({
+        isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    });
 
     try {
-        const passengersResult =
-            await passengerRepo.createBulkPassenger(passengerPayloads);
+        const passengersResult = await passengerRepo.createBulkPassenger(
+            passengerPayloads,
+            t,
+        );
 
-        const bookingResult = await bookingRepo.createBooking(bookingPayload);
-
-        await t.commit();
+        const bookingResult = await bookingRepo.createBooking(
+            bookingPayload,
+            t,
+        );
 
         // Call Booking Details Use Case
         const {
@@ -80,7 +85,10 @@ exports.createBooking = async (payload) => {
         const bookingDetailsResult =
             await bookingDetailUseCase.createBulkBookingDetail(
                 bookingDetailPayload,
+                t,
             );
+
+        await t.commit();
 
         return {
             passengersResult,
@@ -168,7 +176,6 @@ exports.updateBooking = async (id, payload) => {
     const data = await bookingRepo.getBookingId(id);
     return data;
 };
-
 
 exports.deleteBooking = async (id) => {
     const data = await bookingRepo.deleteBooking(id);

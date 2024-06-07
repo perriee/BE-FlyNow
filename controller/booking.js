@@ -37,7 +37,7 @@ exports.getBookingId = async (req, res, next) => {
 exports.createBooking = async (req, res, next) => {
     try {
         const {
-            bookingCode,
+            // bookingCode,
             departureFlightId,
             returnFlightId = null,
             userId,
@@ -48,12 +48,12 @@ exports.createBooking = async (req, res, next) => {
             seatPayloads,
         } = req.body;
 
-        if (!bookingCode || bookingCode === "") {
-            return next({
-                message: "Booking Code must be filled",
-                statusCode: 400,
-            });
-        }
+        // if (!bookingCode || bookingCode === "") {
+        //     return next({
+        //         message: "Booking Code must be filled",
+        //         statusCode: 400,
+        //     });
+        // }
         if (!departureFlightId || departureFlightId === "") {
             return next({
                 message: "Departure Flight Id must be filled",
@@ -152,7 +152,7 @@ exports.createBooking = async (req, res, next) => {
 
         const data = await bookingUsecase.createBooking({
             bookingPayload: {
-                bookingCode,
+                // bookingCode,
                 departureFlightId,
                 returnFlightId,
                 userId,

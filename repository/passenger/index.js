@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const { passenger } = require("../../models");
 
 exports.getPassengers = async () => {
@@ -16,8 +15,8 @@ exports.createPassenger = async (payload) => {
     return data;
 };
 
-exports.createBulkPassenger = async (payload) => {
-    const data = await passenger.bulkCreate(payload);
+exports.createBulkPassenger = async (payload, t) => {
+    const data = await passenger.bulkCreate(payload, { transaction: t });
     return data;
 };
 
