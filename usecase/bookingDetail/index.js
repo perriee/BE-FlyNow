@@ -1,6 +1,5 @@
 const detailsRepo = require("../../repository/bookingDetails");
 const seatsRepo = require("../../repository/seat");
-const seatsRepo = require("../../repository/seat");
 
 exports.getBookingDetails = async () => {
     const data = await detailsRepo.getBookingDetails();
