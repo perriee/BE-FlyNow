@@ -1,11 +1,12 @@
 const { seat, flight } = require("../../models");
 
-exports.checkSeat = async (flightId, seatCode) => {
+exports.checkSeat = async (flightId, seatCode, t) => {
     const data = await seat.findOne({
         where: {
             flightId,
             seatCode,
         },
+        transaction: t
     });
 
     if (!data.seatAvailable) {
@@ -13,6 +14,20 @@ exports.checkSeat = async (flightId, seatCode) => {
     }
     return data.id;
 };
+
+exports.updateSeatAvailability = async (seatId, available, t) => {
+    await seat.update(
+        {
+            seatAvailable: available,
+        },
+        {
+            where: {
+                id: seatId,
+            },
+            transaction: t
+        }
+    );
+}
 
 exports.getSeats = async () => {
     const data = await seat.findAll({
