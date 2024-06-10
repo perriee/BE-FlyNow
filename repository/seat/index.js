@@ -1,5 +1,33 @@
-const { where } = require("sequelize");
 const { seat, flight } = require("../../models");
+
+exports.checkSeat = async (flightId, seatCode, t) => {
+    const data = await seat.findOne({
+        where: {
+            flightId,
+            seatCode,
+        },
+        transaction: t
+    });
+
+    if (!data.seatAvailable) {
+        throw new Error(`Seat is not available!`);
+    }
+    return data.id;
+};
+
+exports.updateSeatAvailability = async (seatId, available, t) => {
+    await seat.update(
+        {
+            seatAvailable: available,
+        },
+        {
+            where: {
+                id: seatId,
+            },
+            transaction: t
+        }
+    );
+}
 
 exports.getSeats = async () => {
     const data = await seat.findAll({
@@ -13,7 +41,7 @@ exports.getSeats = async () => {
 };
 
 exports.getSeatById = async (id) => {
-    let data = await seat.findAll({
+    const data = await seat.findAll({
         where: {
             id,
         },
@@ -43,17 +71,17 @@ exports.updateSeat = async (id, payload) => {
     });
 
     const data = await seat.findAll({
-        where : {
+        where: {
             id,
         },
         include: [
             {
                 model: flight,
-            }
-        ]
-    })
+            },
+        ],
+    });
 
-    if( data.length > 0 ) {
+    if (data.length > 0) {
         return data[0];
     }
     throw new Error(`Seat is not found!`);
@@ -66,10 +94,10 @@ exports.deleteSeat = async (id) => {
         },
     });
 
-	// Return the number of deleted rows
-	if(data === 0) {
-		throw new Error(`Seat not found!`);
-	}
+    // Return the number of deleted rows
+    if (data === 0) {
+        throw new Error(`Seat not found!`);
+    }
 
     return null;
 };

@@ -37,22 +37,16 @@ exports.getBookingId = async (req, res, next) => {
 exports.createBooking = async (req, res, next) => {
     try {
         const {
-            bookingCode,
             departureFlightId,
             returnFlightId = null,
             userId,
             numAdults,
             numChildren = null,
             numBabies = null,
-            passangers,
+            passengerPayloads,
+            seatPayloads,
         } = req.body;
 
-        if (!bookingCode || bookingCode === "") {
-            return next({
-                message: "Booking Code must be filled",
-                statusCode: 400,
-            });
-        }
         if (!departureFlightId || departureFlightId === "") {
             return next({
                 message: "Departure Flight Id must be filled",
@@ -87,7 +81,7 @@ exports.createBooking = async (req, res, next) => {
         }
 
         // eslint-disable-next-line consistent-return
-        passangers.forEach((passanger) => {
+        passengerPayloads.forEach((passenger) => {
             const {
                 name,
                 dateOfBirth,
@@ -97,7 +91,7 @@ exports.createBooking = async (req, res, next) => {
                 issuingCountry,
                 expiryDate,
                 passengerType,
-            } = passanger;
+            } = passenger;
 
             if (!name || name === "") {
                 return next({
@@ -150,8 +144,7 @@ exports.createBooking = async (req, res, next) => {
         });
 
         const data = await bookingUsecase.createBooking({
-            bookingData: {
-                bookingCode,
+            bookingPayload: {
                 departureFlightId,
                 returnFlightId,
                 userId,
@@ -159,7 +152,8 @@ exports.createBooking = async (req, res, next) => {
                 numChildren,
                 numBabies,
             },
-            passangersData: passangers,
+            passengerPayloads,
+            seatPayloads,
         });
 
         return res.status(200).json({
