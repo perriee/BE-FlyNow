@@ -46,7 +46,7 @@ exports.createBookingDetail = async (req, res, next) => {
         }
         if (!passengerId || passengerId == "") {
             return next({
-                message: "passanger Id must be filled",
+                message: "passenger Id must be filled",
                 statusCode: 400,
             });
         }
@@ -85,7 +85,7 @@ exports.updateBookingDetail = async (req, res, next) => {
         }
         if (!passengerId || passengerId == "") {
             return next({
-                message: "passanger Id must be filled",
+                message: "passenger Id must be filled",
                 statusCode: 400,
             });
         }
