@@ -12,8 +12,8 @@ exports.generateOTP = () => {
 };
 
 exports.checkOTP = (otpFromRequest, otpFromDB, otpCreatedAt) => {
-    // Set OTP expiration time to 30 minutes
-    const otpExpired = 30 * 60 * 1000;
+    // Set OTP expiration time to 15 minutes
+    const otpExpired = 15 * 60 * 1000;
     const currentTime = new Date();
 
     const isValid = otpFromRequest === otpFromDB;
