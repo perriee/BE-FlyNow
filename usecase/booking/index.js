@@ -1,16 +1,17 @@
 /* eslint-disable no-plusplus */
+const { Transaction } = require("sequelize");
+
 const { sequelize } = require("../../models");
 const bookingRepo = require("../../repository/booking");
 const passengerRepo = require("../../repository/passenger");
 const bookingDetailUseCase = require("../bookingDetail");
-
-
 
 exports.getBookings = async () => {
     const data = await bookingRepo.getBookings();
     return data;
 };
 
+// TODO: Harus join table bookings, bookingDetails, passengers, seats, flights, users, airline, airport, dan payment
 // TODO: Harus join table bookings, bookingDetails, passengers, seats, flights, users, airline, airport, dan payment
 exports.getBookingId = async (id) => {
     const data = await bookingRepo.getBookingId(id);
@@ -20,15 +21,20 @@ exports.getBookingId = async (id) => {
 exports.createBooking = async (payload) => {
     const { bookingPayload, passengerPayloads, seatPayloads } = payload;
 
-    const t = await sequelize.transaction();
+    const t = await sequelize.transaction({
+        isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    });
 
     try {
-        const passengersResult =
-            await passengerRepo.createBulkPassenger(passengerPayloads);
+        const passengersResult = await passengerRepo.createBulkPassenger(
+            passengerPayloads,
+            t,
+        );
 
-        const bookingResult = await bookingRepo.createBooking(bookingPayload);
-
-        await t.commit();
+        const bookingResult = await bookingRepo.createBooking(
+            bookingPayload,
+            t,
+        );
 
         // Call Booking Details Use Case
         const {
@@ -80,75 +86,11 @@ exports.createBooking = async (payload) => {
         const bookingDetailsResult =
             await bookingDetailUseCase.createBulkBookingDetail(
                 bookingDetailPayload,
+                t,
             );
-
-        return {
-            passengersResult,
-            bookingResult,
-            bookingDetailsResult,
-        };
-    } catch (error) {
-        await t.rollback();
-        throw error;
-    }
-};
-
-/** V2 Create Booking
-exports.createBooking = async (payload) => {
-    const { bookingPayload, passengerPayloads } = payload;
-
-    const t = await sequelize.transaction();
-
-    try {
-        const passengersResult =
-            await passengerRepo.createBulkPassenger(passengerPayloads);
-
-        const bookingResult = await bookingRepo.createBooking(bookingPayload);
 
         await t.commit();
 
-        // Call Booking Details Use Case
-        const {
-            id: bookingId,
-            departureFlightId,
-            returnFlightId,
-        } = bookingResult;
-
-        const bookingDetailsResult = {
-            departureDetail: [],
-            returnDetail: [],
-        };
-
-        passengerPayloads.forEach(async (passenger) => {
-            if (passenger?.departureSeatCode) {
-                const result = await bookingDetailsUseCase.createBookingDetail({
-                    bookingId,
-                    flightId: departureFlightId,
-                    passengerId: passenger.id,
-                    // RECHECK: yang dikirim ke client itu seatId atau seatCode?
-                    seatCode: passenger?.departureSeatCode,
-                });
-                bookingDetailsResult.departureDetail.push({
-                    ...result,
-                    seatCode: passenger?.departureSeatCode,
-                });
-            }
-
-            if (passenger?.returnSeatCode) {
-                const result = await bookingDetailsUseCase.createBookingDetail({
-                    bookingId,
-                    flightId: returnFlightId,
-                    passengerId: passenger.id,
-                    // RECHECK: yang dikirim ke client itu seatId atau seatCode?
-                    seatCode: passenger?.returnSeatCode,
-                });
-                bookingDetailsResult.returnDetail.push({
-                    ...result,
-                    seatCode: passenger?.returnSeatCode,
-                });
-            }
-        });
-
         return {
             passengersResult,
             bookingResult,
@@ -159,8 +101,6 @@ exports.createBooking = async (payload) => {
         throw error;
     }
 };
-
- */
 
 // FIXME: Update Booking belum bisa digunakan
 exports.updateBooking = async (id, payload) => {

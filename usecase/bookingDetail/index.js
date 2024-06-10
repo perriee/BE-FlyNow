@@ -24,16 +24,19 @@ exports.createBookingDetail = async (payload) => {
     return data;
 };
 
-exports.createBulkBookingDetail = async (payload) => {
+exports.createBulkBookingDetail = async (payload, t) => {
     const promises = payload.map(async (bookingDetail) => {
         const { bookingId, flightId, passengerId, seatCode } = bookingDetail;
-        // RECHECK: seatAvailable belum diubah menjadi false, harusnya diubah di sini atau di tempat lain?
-        const seatId = await seatsRepo.checkSeat(flightId, seatCode);
-        return detailsRepo.createBookingDetail({
-            bookingId,
-            passengerId,
-            seatId,
-        });
+        const seatId = await seatsRepo.checkSeat(flightId, seatCode, t);
+        await seatsRepo.updateSeatAvailability(seatId, false, t);
+        return detailsRepo.createBookingDetail(
+            {
+                bookingId,
+                passengerId,
+                seatId,
+            },
+            t,
+        );
     });
 
     const data = await Promise.all(promises);
