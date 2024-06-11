@@ -30,25 +30,25 @@ exports.register = async (req, res, next) => {
         const otpCreatedAt = otpData.createdAt;
 
         // validate request
-        if (!name || name == "") {
+        if (!name || name === "") {
             return next({
                 message: "name is required",
                 statusCode: 400,
             });
         }
-        if (!email || email == "") {
+        if (!email || email === "") {
             return next({
                 message: "email is required",
                 statusCode: 400,
             });
         }
-        if (!password || password == "") {
+        if (!password || password === "") {
             return next({
                 message: "password is required",
                 statusCode: 400,
             });
         }
-        if (!phoneNumber || phoneNumber == "") {
+        if (!phoneNumber || phoneNumber === "") {
             return next({
                 message: "phoneNumber is required",
                 statusCode: 400,
@@ -66,6 +66,21 @@ exports.register = async (req, res, next) => {
             otpCreatedAt,
         });
 
+        const emailTemplate = {
+            from: {
+                name: "FlyNow Support",
+                address: MAIL_USERNAME,
+            },
+            to: email,
+            subject: "Kode Verifikasi Email (OTP)",
+            html: `
+                <h3>Silahkan masukkan OTP di bawah ini untuk memverifikasi email kamu</h3> 
+                <p><b>${otp}</b></p>
+                <p><i>Kode OTP hanya berlaku 15 menit dan bersifat rahasia. Mohon untuk tidak membagikan kode ini kepada siapapun termasuk pihak yang mengatasnamakan FlyNow.</i></p>`,
+        };
+
+        sendEmail(emailTemplate);
+
         res.status(201).json({
             message: "Register Successful",
             data,
@@ -80,13 +95,13 @@ exports.login = async (req, res, next) => {
         const { email, password } = req.body;
 
         // validate request
-        if (!email || email == "") {
+        if (!email || email === "") {
             return next({
                 message: "email is required",
                 statusCode: 400,
             });
         }
-        if (!password || password == "") {
+        if (!password || password === "") {
             return next({
                 message: "password is required",
                 statusCode: 400,
@@ -179,7 +194,7 @@ exports.forgotPassword = async (req, res, next) => {
             to: email,
             subject: "Link Reset Password",
             html: `
-                <p>Silahkan klik link dibawah ini untuk reset password</p> 
+                <h3>Silahkan klik link dibawah ini untuk reset password</h3> 
                 <p>${CLIENT_URL}/reset-password/${token}</p>
             `,
         };
@@ -268,9 +283,9 @@ exports.resendOTP = async (req, res, next) => {
             to: email,
             subject: "Kode Verifikasi Email (OTP)",
             html: `
-                <p>Silahkan masukkan OTP di bawah ini untuk memverifikasi email kamu</p> 
+                <h3>Silahkan masukkan OTP di bawah ini untuk memverifikasi email kamu</h3> 
                 <p><b>${otp}</b></p>
-                <p><i>Kode OTP hanya berlaku 30 menit dan bersifat rahasia. Mohon untuk tidak membagikan kode ini kepada siapapun termasuk pihak yang mengatasnamakan FlyNow.</i></p>`,
+                <p><i>Kode OTP hanya berlaku 15 menit dan bersifat rahasia. Mohon untuk tidak membagikan kode ini kepada siapapun termasuk pihak yang mengatasnamakan FlyNow.</i></p>`,
         };
 
         sendEmail(emailTemplate);
