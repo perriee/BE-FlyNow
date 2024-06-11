@@ -12,10 +12,7 @@ const {
 const { authMiddleware } = require("../middleware/auth");
 
 /* For "Admin" (won't be directly called in FE) */
-router
-    .route("/")
-    .post(authMiddleware(), createAirport)
-    .get(authMiddleware(), getAllAirports);
+router.route("/").post(authMiddleware(), createAirport);
 router
     .route("/:id")
     .patch(authMiddleware(), editAirport)
@@ -23,6 +20,7 @@ router
 
 /* For Users (will be directly called in FE) */
 router.get("/search", searchAirport);
+router.get("/", getAllAirports);
 router.get("/:id", getAirportByID);
 
 module.exports = router;
