@@ -78,7 +78,7 @@ exports.searchFlight = async (query) => {
                 model: airline,
             },
         ],
-        order: order,
+        order,
     });
 
     if (query.rd) {
@@ -111,7 +111,7 @@ exports.searchFlight = async (query) => {
                     model: airline,
                 },
             ],
-            order: order,
+            order,
         });
         return { departureFlights, returnFlights };
     }
