@@ -24,6 +24,26 @@ exports.searchFlight = async (query) => {
         case "arrival-desc":
             order = [["arrivalTime", "DESC"]];
             break;
+        case "duration-asc":
+            order = [
+                [
+                    Sequelize.literal(
+                        `EXTRACT(EPOCH FROM ("arrivalTime" - "departureTime")) / 60`,
+                    ),
+                    "ASC",
+                ],
+            ];
+            break;
+        case "duration-desc":
+            order = [
+                [
+                    Sequelize.literal(
+                        `EXTRACT(EPOCH FROM ("arrivalTime" - "departureTime")) / 60`,
+                    ),
+                    "DESC",
+                ],
+            ];
+            break;
         default:
             order = [["departureTime", "ASC"]];
             break;
