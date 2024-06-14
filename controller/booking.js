@@ -25,12 +25,12 @@ exports.getBookingId = async (req, res, next) => {
             });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             message: "Success",
             data,
         });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 };
 
@@ -39,13 +39,13 @@ exports.createBooking = async (req, res, next) => {
         const {
             departureFlightId,
             returnFlightId = null,
-            userId,
             numAdults,
             numChildren = null,
             numBabies = null,
             passengerPayloads,
             seatPayloads,
         } = req.body;
+        const userId = req.user.id;
 
         if (!departureFlightId || departureFlightId === "") {
             return next({
@@ -53,12 +53,14 @@ exports.createBooking = async (req, res, next) => {
                 statusCode: 400,
             });
         }
+        
         if (!userId || userId === "") {
             return next({
                 message: "User Id must be filled",
                 statusCode: 400,
             });
         }
+
         if (!numAdults || numAdults === "") {
             return next({
                 message: "Number Adults must be filled",
