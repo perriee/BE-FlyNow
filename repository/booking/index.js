@@ -45,44 +45,10 @@ exports.getBookingByUserId = async (userId) => {
             },
             {
                 model: flight,
-                include: [
-                    {
-                        model: airline,
-                        attributes: [
-                            "id",
-                            "airlineCode",
-                            "airlineName",
-                            "image",
-                        ],
-                    },
-                    {
-                        model: airport,
-                        as: "departureAirport", // Specify alias for the departure airport
-                        attributes: [
-                            "id",
-                            "airportCode",
-                            "airportName",
-                            "city",
-                            "country",
-                        ],
-                    },
-                    {
-                        model: airport,
-                        as: "arrivalAirport", // Specify alias for the arrival airport
-                        attributes: [
-                            "id",
-                            "airportCode",
-                            "airportName",
-                            "city",
-                            "country",
-                        ],
-                    },
-                ],
             },
         ],
         where: { userId },
     });
-
     return data;
 };
 
