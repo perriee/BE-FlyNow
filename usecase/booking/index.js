@@ -92,9 +92,9 @@ exports.createBooking = async (payload) => {
         await t.commit();
 
         return {
-            passengersResult,
-            bookingResult,
-            bookingDetailsResult,
+            passangers: passengersResult,
+            booking: bookingResult,
+            bookingDetails: bookingDetailsResult,
         };
     } catch (error) {
         await t.rollback();
