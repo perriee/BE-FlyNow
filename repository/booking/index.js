@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const { booking, user, flight, airport, airline } = require("../../models");
 
 exports.getBookings = async () => {
@@ -87,6 +88,32 @@ exports.getBookingByUserId = async (userId) => {
 
 exports.createBooking = async (payload) => {
     const data = await booking.create(payload);
+    return data;
+};
+
+exports.getBookingByUserId = async (userId) => {
+    const data = await booking.findAll({
+        include: [
+            {
+                model: user,
+                attributes: ["id", "name", "email", "image", "phoneNumber"],
+            },
+            {
+                model: flight,
+            },
+        ],
+        where: { userId },
+    });
+
+    return data;
+};
+
+exports.createBooking = async (payload, t) => {
+    const bookingCode = crypto.randomBytes(9).toString("hex");
+    const data = await booking.create(
+        { ...payload, bookingCode },
+        { transaction: t },
+    );
     return data;
 };
 

@@ -4,11 +4,49 @@ const { flight, airport, airline } = require("../../models");
 
 exports.searchFlight = async (query) => {
     let order;
-    if (query.sort) {
-        const sortOrder = query.sort.toLowerCase() === "desc" ? "DESC" : "ASC";
-        order = [["price", sortOrder]];
-    } else {
-        order = [["departureTime", "ASC"]];
+
+    switch (query.sort) {
+        case "price-asc":
+            order = [["price", "ASC"]];
+            break;
+        case "price-desc":
+            order = [["price", "DESC"]];
+            break;
+        case "departure-asc":
+            order = [["departureTime", "ASC"]];
+            break;
+        case "departure-desc":
+            order = [["departureTime", "DESC"]];
+            break;
+        case "arrival-asc":
+            order = [["arrivalTime", "ASC"]];
+            break;
+        case "arrival-desc":
+            order = [["arrivalTime", "DESC"]];
+            break;
+        case "duration-asc":
+            order = [
+                [
+                    Sequelize.literal(
+                        `EXTRACT(EPOCH FROM ("arrivalTime" - "departureTime")) / 60`,
+                    ),
+                    "ASC",
+                ],
+            ];
+            break;
+        case "duration-desc":
+            order = [
+                [
+                    Sequelize.literal(
+                        `EXTRACT(EPOCH FROM ("arrivalTime" - "departureTime")) / 60`,
+                    ),
+                    "DESC",
+                ],
+            ];
+            break;
+        default:
+            order = [["departureTime", "ASC"]];
+            break;
     }
 
     const departureFlights = await flight.findAll({
@@ -16,7 +54,7 @@ exports.searchFlight = async (query) => {
             [Op.and]: [
                 Sequelize.where(
                     Sequelize.fn("DATE", Sequelize.col("departureTime")),
-                    query.departureTime,
+                    query.dd,
                 ),
             ],
             flightClass: query.class,
@@ -26,14 +64,14 @@ exports.searchFlight = async (query) => {
                 model: airport,
                 as: "departureAirport",
                 where: {
-                    airportCode: query.departureAirport,
+                    airportCode: query.da,
                 },
             },
             {
                 model: airport,
                 as: "arrivalAirport",
                 where: {
-                    airportCode: query.arrivalAirport,
+                    airportCode: query.aa,
                 },
             },
             {
@@ -43,13 +81,13 @@ exports.searchFlight = async (query) => {
         order: order,
     });
 
-    if (query.returnDate) {
+    if (query.rd) {
         const returnFlights = await flight.findAll({
             where: {
                 [Op.and]: [
                     Sequelize.where(
                         Sequelize.fn("DATE", Sequelize.col("departureTime")),
-                        query.returnDate,
+                        query.rd,
                     ),
                 ],
                 flightClass: query.class,
@@ -59,14 +97,14 @@ exports.searchFlight = async (query) => {
                     model: airport,
                     as: "departureAirport",
                     where: {
-                        airportCode: query.arrivalAirport,
+                        airportCode: query.aa,
                     },
                 },
                 {
                     model: airport,
                     as: "arrivalAirport",
                     where: {
-                        airportCode: query.departureAirport,
+                        airportCode: query.da,
                     },
                 },
                 {
@@ -77,7 +115,7 @@ exports.searchFlight = async (query) => {
         });
         return { departureFlights, returnFlights };
     }
-    return departureFlights;
+    return { departureFlights };
 };
 
 exports.getAllFlights = async () => {
@@ -98,7 +136,6 @@ exports.getAllFlights = async () => {
     });
     return data;
 };
-
 
 exports.getFlight = async (id) => {
     const data = await flight.findAll({

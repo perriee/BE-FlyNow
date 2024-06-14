@@ -1,4 +1,5 @@
 const detailsRepo = require("../../repository/bookingDetails");
+const seatsRepo = require("../../repository/seat");
 
 exports.getBookingDetails = async () => {
     const data = await detailsRepo.getBookingDetails();
@@ -11,7 +12,34 @@ exports.getBookingDetailById = async (id) => {
 };
 
 exports.createBookingDetail = async (payload) => {
-    const data = await detailsRepo.createBookingDetail(payload);
+    const { bookingId, flightId, passengerId, seatCode } = payload;
+    const seatId = await seatsRepo.checkSeat(flightId, seatCode);
+
+    const data = await detailsRepo.createBookingDetail({
+        bookingId,
+        passengerId,
+        seatId,
+    });
+
+    return data;
+};
+
+exports.createBulkBookingDetail = async (payload, t) => {
+    const promises = payload.map(async (bookingDetail) => {
+        const { bookingId, flightId, passengerId, seatCode } = bookingDetail;
+        const seatId = await seatsRepo.checkSeat(flightId, seatCode, t);
+        await seatsRepo.updateSeatAvailability(seatId, false, t);
+        return detailsRepo.createBookingDetail(
+            {
+                bookingId,
+                passengerId,
+                seatId,
+            },
+            t,
+        );
+    });
+
+    const data = await Promise.all(promises);
     return data;
 };
 

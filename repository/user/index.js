@@ -39,6 +39,26 @@ exports.createUser = async (payload) => {
 
     return data;
 };
+exports.createUserForGoogleLogin = async (payload) => {
+    // check if the email already exists
+    const existingUser = await user.findOne({
+        where: { email: payload.email },
+    });
+
+    if (existingUser) {
+        throw new Error("Email already exists");
+    }
+
+    // encrypt the password
+    payload.password = bcrypt.hashSync(payload.password, 10);
+
+    
+
+    // create data to postgres
+    const data = await user.create(payload);
+
+    return data;
+};
 
 exports.getUserByID = async (id) => {
     // get data from db
@@ -65,6 +85,21 @@ exports.getUserByEmail = async (email) => {
 
     if (!data) {
         throw new Error(`User with email ${email} is not found!`);
+    }
+
+    return data;
+};
+
+exports.getUserByEmailForGoogleLogin = async (email) => {
+    // get data from db
+    const data = await user.findOne({
+        where: {
+            email,
+        },
+    });
+
+    if (!data) {
+        return null;
     }
 
     return data;
