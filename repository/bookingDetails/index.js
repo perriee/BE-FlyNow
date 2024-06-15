@@ -67,8 +67,10 @@ exports.getBookingDetailByBookingId = async (bookingId) => {
     return data;
 };
 
-exports.createBookingDetail = async (payload) => {
-    const data = await bookingDetail.create(payload);
+exports.createBookingDetail = async (payload, t) => {
+    const data = await bookingDetail.create(payload, {
+        transaction: t,
+    });
     return data;
 };
 
