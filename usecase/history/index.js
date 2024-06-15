@@ -1,8 +1,7 @@
 const bookingRepo = require("../../repository/booking");
 const bookingDetailsRepo = require("../../repository/bookingDetails");
 const paymentRepo = require("../../repository/payment");
-const airlineRepo = require("../../repository/airline");
-const airportRepo = require("../../repository/airport");
+const flightRepo = require("../../repository/flight");
 
 exports.getHistories = async (userId) => {
     const bookings = await bookingRepo.getBookingByUserId(userId);
@@ -11,7 +10,7 @@ exports.getHistories = async (userId) => {
         bookings.map(async (bookingInstance, index) => {
             const bookingPlain = bookingInstance.get({ plain: true });
 
-            const bookingDetail =
+            const bookingDetails =
                 await bookingDetailsRepo.getBookingDetailByBookingId(
                     bookingPlain.id,
                 );
@@ -20,23 +19,40 @@ exports.getHistories = async (userId) => {
                 bookingPlain.id,
             );
 
-            const airline = await airlineRepo.getAirlineById(
-                bookingPlain.flight.airlineId,
+            const departureFlight = await flightRepo.getFlight(
+                bookingPlain.departureFlightId,
             );
-            const departureAirport = await airportRepo.getAirportByID(
-                bookingPlain.flight.departureAirportId,
+
+            let returnFlight = null;
+            if (bookingPlain.returnFlightId !== null) {
+                returnFlight = await flightRepo.getFlight(
+                    bookingPlain.returnFlightId,
+                );
+            }
+
+            const departureDetails = bookingDetails.filter(
+                (detail) =>
+                    detail.seat.flightId == bookingPlain.departureFlightId,
             );
-            const arrivalAirport = await airportRepo.getAirportByID(
-                bookingPlain.flight.arrivalAirportId,
-            );
+            let returnDetails = null;
+            if (bookingPlain.returnFlightId !== null) {
+                returnDetails = bookingDetails.filter(
+                    (detail) =>
+                        detail.seat.flightId == bookingPlain.returnFlightId,
+                );
+            }
 
             return {
                 ...bookingPlain,
-                airline,
-                departureAirport,
-                arrivalAirport,
-                details: bookingDetail,
-                payment: payment.get({ plain: true }),
+                flight: {
+                    departure: departureFlight,
+                    return: returnFlight,
+                },
+                details: {
+                    departure: departureDetails,
+                    return: returnDetails,
+                },
+                payment,
             };
         }),
     );
