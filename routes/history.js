@@ -5,4 +5,12 @@ const { authMiddleware } = require("../middleware/auth");
 
 router.route("/").get(authMiddleware(), historyController.getHistories);
 
+router
+    .route("/city/:city")
+    .get(authMiddleware(), historyController.getHistoriesByCity);
+
+router
+    .route("/payment/:paymentStatus")
+    .get(authMiddleware(), historyController.getHistoriesByPaymentStatus);
+
 module.exports = router;

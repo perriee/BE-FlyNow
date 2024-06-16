@@ -59,3 +59,31 @@ exports.getHistories = async (userId) => {
 
     return data;
 };
+
+exports.getHistoriesByCity = async (userId, city) => {
+    const allData = await this.getHistories(userId);
+    const filteredData = allData.filter((data) => {
+        return (
+            data.flight.departure.departureAirport.city.toLowerCase() ==
+                city.toLowerCase() ||
+            data.flight.departure.arrivalAirport.city.toLowerCase() ==
+                city.toLowerCase() ||
+            data.flight.return?.departureAirport?.city.toLowerCase() ==
+                city.toLowerCase() ||
+            data.flight.return?.departureAirport?.city.toLowerCase() ==
+                city.toLowerCase()
+        );
+    });
+    return filteredData;
+};
+
+exports.getHistoriesByPaymentStatus = async (userId, paymentStatus) => {
+    const allData = await this.getHistories(userId);
+    const filteredData = allData.filter((data) => {
+        return (
+            data.payment.paymentStatus.toLowerCase() ==
+            paymentStatus.toLowerCase()
+        );
+    });
+    return filteredData;
+};
