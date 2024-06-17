@@ -8,6 +8,8 @@ const {
     getUserByResetPwdToken,
     updateUserPassword,
     updateUser,
+    getUserByEmailForGoogleLogin,
+    createUserForGoogleLogin,
 } = require("../../repository/user");
 const { createToken } = require("./util");
 
@@ -81,19 +83,23 @@ exports.googleLogin = async (accessToken) => {
     console.log("google-data", googleData);
 
     // get is there any existing user with the email
-    let user = await getUserByEmail(googleData?.email);
+    let user = await getUserByEmailForGoogleLogin(googleData?.email);
     console.log("user", user);
 
     // if not found
     if (!user) {
         // Create new user based on google data that get by access_token
-        user = await createUser({
+        user = await createUserForGoogleLogin({
             name: googleData?.name,
             email: googleData?.email,
             password: "",
             image: googleData?.picture,
             // ! NOTE: kalo nanti error karna phone number nya not null, kasi nilai default seperti di bawah ini saja
-            // phoneNumber: "08",
+            phoneNumber: "",
+            resetPasswordToken:null,
+            isVerified:true,
+            otp:null,
+            otpCreatedAt:null,
         });
     }
 
