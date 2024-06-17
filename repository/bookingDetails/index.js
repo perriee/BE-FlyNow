@@ -50,10 +50,6 @@ exports.getBookingDetailByBookingId = async (bookingId) => {
         },
         include: [
             {
-                model: booking,
-                as: "booking",
-            },
-            {
                 model: passenger,
                 as: "passenger",
             },
