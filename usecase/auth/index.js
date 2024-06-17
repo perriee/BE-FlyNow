@@ -10,6 +10,7 @@ const {
     updateUser,
     getUserByEmailForGoogleLogin,
     createUserForGoogleLogin,
+    editProfile,
 } = require("../../repository/user");
 const { createToken } = require("./util");
 
@@ -96,10 +97,10 @@ exports.googleLogin = async (accessToken) => {
             image: googleData?.picture,
             // ! NOTE: kalo nanti error karna phone number nya not null, kasi nilai default seperti di bawah ini saja
             phoneNumber: "",
-            resetPasswordToken:null,
-            isVerified:true,
-            otp:null,
-            otpCreatedAt:null,
+            resetPasswordToken: null,
+            isVerified: true,
+            otp: null,
+            otpCreatedAt: null,
         });
     }
 
@@ -156,5 +157,18 @@ exports.updateUserIsVerified = async (id, payload) => {
 
 exports.updateUserOTP = async (id, payload) => {
     const data = await updateUser(id, payload);
+    return data;
+};
+
+exports.editProfile = async (id, payload) => {
+    const data = await editProfile(id, payload);
+
+    // delete password from object, agar tidak muncul di response
+    if (data?.dataValues?.password) {
+        delete data.dataValues.password;
+    } else {
+        delete data.password;
+    }
+
     return data;
 };
