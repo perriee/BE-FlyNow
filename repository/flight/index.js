@@ -1,6 +1,6 @@
 const { where } = require("sequelize");
 const { Op, Sequelize } = require("sequelize");
-const { flight, airport, airline } = require("../../models");
+const { flight, airport, airline, seat } = require("../../models");
 
 exports.searchFlight = async (query) => {
     let order;
@@ -276,6 +276,24 @@ exports.getFlight = async (id) => {
 
 exports.createFlight = async (payload) => {
     const data = await flight.create(payload);
+    const rows = ["A", "B", "C", "D", "E", "F"];
+    const seatCountPerRow = 12;
+
+    // Buat semua seat dengan menggunakan Promise.all untuk menunggu semua seat selesai dibuat
+    await Promise.all(
+        rows.map((row) => {
+            return Promise.all(
+                [...Array(seatCountPerRow).keys()].map((i) => {
+                    return seat.create({
+                        seatCode: `${i + 1}${row}`,
+                        seatAvailable: true,
+                        flightId: data.id,
+                    });
+                }),
+            );
+        }),
+    );
+
     return data;
 };
 
