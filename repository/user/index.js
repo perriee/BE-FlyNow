@@ -52,8 +52,6 @@ exports.createUserForGoogleLogin = async (payload) => {
     // encrypt the password
     payload.password = bcrypt.hashSync(payload.password, 10);
 
-    
-
     // create data to postgres
     const data = await user.create(payload);
 
@@ -164,4 +162,37 @@ exports.updateUserPassword = async (resetPasswordToken, newPassword) => {
             },
         },
     );
+};
+
+exports.editProfile = async (id, payload) => {
+    // check if the user exists
+    const isUserExist = await user.findOne({
+        where: {
+            id,
+        },
+    });
+    if (!isUserExist) {
+        throw new Error("User not found!");
+    }
+
+    // check if the user wants to update their image
+    if (payload.image) {
+        const { image } = payload;
+        image.publicId = crypto.randomBytes(16).toString("hex");
+        image.name = `${image.publicId}${path.parse(image.name).ext}`;
+
+        const imageUpload = await uploadToCloudinary(image);
+        payload.image = imageUpload.secure_url;
+    }
+
+    // update the user data
+    const data = await user.update(payload, {
+        where: {
+            id,
+        },
+        returning: true,
+        plain: true,
+    });
+
+    return data[1].dataValues;
 };

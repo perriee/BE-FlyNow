@@ -10,6 +10,7 @@ const {
     updateUserPassword,
     updateUserIsVerified,
     updateUserOTP,
+    editProfile,
 } = require("../usecase/auth");
 const { createToken } = require("../usecase/auth/util");
 const { generateOTP, checkOTP } = require("../helper/otp");
@@ -341,6 +342,38 @@ exports.verifyOTP = async (req, res, next) => {
 
         return res.status(200).json({
             message: "User already verified",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.editProfile = async (req, res, next) => {
+    try {
+        const { name, phoneNumber } = req.body;
+        const image = req?.files?.image;
+        let payload = {};
+
+        if (name != "" && name) {
+            payload.name = name;
+        }
+        if (phoneNumber != "" && phoneNumber) {
+            payload.phoneNumber = phoneNumber;
+        }
+        if (image) {
+            payload.image = image;
+        }
+
+        console.log(req.body);
+        if (Object.keys(payload).length === 0) {
+            throw new Error("Nothing to update!");
+        }
+
+        const data = await editProfile(req.user.id, payload);
+
+        res.status(200).json({
+            message: "Profile updated successfully",
+            data,
         });
     } catch (error) {
         next(error);
