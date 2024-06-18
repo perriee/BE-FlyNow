@@ -281,16 +281,14 @@ exports.createFlight = async (payload) => {
 
     // Buat semua seat dengan menggunakan Promise.all untuk menunggu semua seat selesai dibuat
     await Promise.all(
-        rows.map((row) => {
-            return Promise.all(
-                [...Array(seatCountPerRow).keys()].map((i) => {
-                    return seat.create({
-                        seatCode: `${i + 1}${row}`,
-                        seatAvailable: true,
-                        flightId: data.id,
-                    });
-                }),
-            );
+        [...Array(seatCountPerRow).keys()].flatMap((i) => {
+            return rows.map((row) => {
+                return seat.create({
+                    seatCode: `${i + 1}${row}`,
+                    seatAvailable: true,
+                    flightId: data.id,
+                });
+            });
         }),
     );
 
