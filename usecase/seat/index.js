@@ -25,3 +25,8 @@ exports.deleteSeat = async (id) => {
     const data = await seatRepo.deleteSeat(id);
     return data;
 };
+
+exports.getSeatByFlightId = async (flightId) => {
+    const data = await seatRepo.getSeatByFlightId(flightId);
+    return data;
+}

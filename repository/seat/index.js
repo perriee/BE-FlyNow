@@ -6,7 +6,7 @@ exports.checkSeat = async (flightId, seatCode, t) => {
             flightId,
             seatCode,
         },
-        transaction: t
+        transaction: t,
     });
 
     if (!data.seatAvailable) {
@@ -24,10 +24,10 @@ exports.updateSeatAvailability = async (seatId, available, t) => {
             where: {
                 id: seatId,
             },
-            transaction: t
-        }
+            transaction: t,
+        },
     );
-}
+};
 
 exports.getSeats = async () => {
     const data = await seat.findAll({
@@ -100,4 +100,17 @@ exports.deleteSeat = async (id) => {
     }
 
     return null;
+};
+
+exports.getSeatByFlightId = async (flightId) => {
+    const data = await seat.findAll({
+        where: { flightId },
+        order: [["id", "ASC"]],
+    });
+
+    if (data.length > 0) {
+        return data;
+    }
+
+    throw new Error(`Seat is not found!`);
 };
