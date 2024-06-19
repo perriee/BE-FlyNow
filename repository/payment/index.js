@@ -5,10 +5,17 @@ exports.getPayments = async () => {
     return data;
 };
 
-// exports.getPaymentById = async (id) => {
-//     const data = await payment.findAll({ where: { id } })
-//     return data
-// }
+exports.getPaymentById = async (id) => {
+    const data = await payment.findOne({ where: { id } });
+    return data;
+};
+
+exports.getPaymentByTransactionId = async (transactionId) => {
+    const data = await payment.findOne({
+        where: { transactionId: transactionId },
+    });
+    return data;
+};
 
 exports.getPaymentByBookingId = async (bookingId) => {
     const data = await payment.findOne({ where: { bookingId } });
@@ -16,12 +23,8 @@ exports.getPaymentByBookingId = async (bookingId) => {
 };
 
 exports.createPayment = async (payload) => {
-    const data = await payment.create({
-        bookingId: payload.bookingId,
-        paymentAmount: payload.paymentAmount,
-        paymenMethod: payload.paymentMethod,
-        paymentStatus: payload.paymentStatus,
-    });
+    const data = await payment.create(payload);
+
     return data;
 };
 
@@ -51,4 +54,14 @@ exports.updatePayment = async (payload) => {
     } else {
         throw new Error(`Booking with id ${bookingId} is not found`);
     }
+};
+
+exports.updatePaymentStatus = async (transactionId, payload) => {
+    const data = await payment.update(payload, {
+        where: {
+            transactionId: transactionId,
+        },
+    });
+
+    return data;
 };
