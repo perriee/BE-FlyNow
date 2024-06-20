@@ -36,7 +36,7 @@ exports.createPayment = async (req, res, next) => {
 
         // GET USER DATA
         const user = req.user;
-
+      
         // CEK APAKAH BOOKING ID SUDAH ADA PAYMENT ID
         const isBookingHasPayment =
             await paymentUsecase.getPaymentByBookingId(bookingId);
