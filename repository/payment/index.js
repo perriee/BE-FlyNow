@@ -1,4 +1,4 @@
-const { payment } = require("../../models");
+const { payment, booking } = require("../../models");
 
 exports.getPayments = async () => {
     const data = await payment.findAll();
@@ -18,7 +18,14 @@ exports.getPaymentByTransactionId = async (transactionId) => {
 };
 
 exports.getPaymentByBookingId = async (bookingId) => {
-    const data = await payment.findOne({ where: { bookingId } });
+    const data = await payment.findOne({
+        where: { bookingId },
+        include: [
+            {
+                model: booking,
+            },
+        ],
+    });
     return data;
 };
 
