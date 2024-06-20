@@ -1,4 +1,5 @@
 const paymentRepo = require("../../repository/payment");
+const flightRepo = require("../../repository/flight");
 
 exports.getPayments = async () => {
     const data = await paymentRepo.getPayments();
@@ -7,7 +8,6 @@ exports.getPayments = async () => {
 
 exports.getPaymentById = async (id) => {
     const data = await paymentRepo.getPaymentById(id);
-    return data;
 };
 
 exports.getPaymentByTransactionId = async (transactionId) => {
@@ -17,7 +17,26 @@ exports.getPaymentByTransactionId = async (transactionId) => {
 
 exports.getPaymentByBookingId = async (bookingId) => {
     const data = await paymentRepo.getPaymentByBookingId(bookingId);
-    return data;
+
+    if (data) {
+        const departureFlightId = data.booking.departureFlightId;
+        const returnFlightId = data.booking.returnFlightId;
+
+        const departureFlight = await flightRepo.getFlight(departureFlightId);
+
+        let returnFlight = null;
+        if (returnFlightId) {
+            returnFlight = await flightRepo.getFlight(returnFlightId);
+        }
+
+        const result = data.toJSON();
+        result.booking.departureFlight = departureFlight;
+        result.booking.returnFlight = returnFlight;
+
+        return result;
+    }
+
+    return null;
 };
 
 exports.createPayment = async (payload) => {
