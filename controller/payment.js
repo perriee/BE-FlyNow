@@ -49,23 +49,25 @@ exports.getPaymentByBookingId = async (req, res, next) => {
 
 exports.createPayment = async (req, res, next) => {
     try {
-        const { bookingId, paymentAmount, paymentMethod, paymentStatus } =
-            req.body;
+        const { bookingId, paymentAmount } = req.body;
 
         // GET USER DATA
         const user = req.user;
 
-        // CEK APAKAH BOOKING ID ADA ATAU TIDAK
-        // const currentBookingData = await bookingUsecase.getBookingId(bookingId);
-        // console.log(
-        //     "🚀 ~ exports.createPayment= ~ currentBookingData:",
-        //     currentBookingData,
-        // );
+        // CEK APAKAH BOOKING ID SUDAH ADA PAYMENT ID
+        const isBookingHasPayment =
+            await paymentUsecase.getPaymentByBookingId(bookingId);
+
+        if (isBookingHasPayment !== null) {
+            return res.status(400).json({
+                status: "Error",
+                message: "Booking already has payment",
+            });
+        }
 
         const transaction_id = `TRX-${crypto.randomBytes(4).toString("hex")}-${crypto.randomBytes(4).toString("hex")}`;
         const gross_amount = paymentAmount;
         const authString = btoa(process.env.MIDTRANS_SERVER_KEY);
-        console.log("🚀 ~ exports.createPayment= ~ authString:", authString);
 
         const payload = {
             transaction_details: {
@@ -78,7 +80,7 @@ exports.createPayment = async (req, res, next) => {
                 phone: user.phoneNumber,
             },
             callbacks: {
-                finish: "http://localhost:3000/api/payment/notification",
+                finish: "https://google.com",
             },
             expiry: {
                 unit: "minutes",
@@ -103,7 +105,7 @@ exports.createPayment = async (req, res, next) => {
 
         if (response.status !== 201) {
             return res.status(500).json({
-                status: "Error",
+                status: "error",
                 message: "Payment failed",
             });
         }
@@ -117,7 +119,7 @@ exports.createPayment = async (req, res, next) => {
         });
 
         res.status(200).json({
-            message: "Success create payment",
+            message: "success create payment",
             data,
         });
     } catch (error) {
