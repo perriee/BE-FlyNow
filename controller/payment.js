@@ -1,6 +1,5 @@
 const crypto = require("crypto");
 const paymentUsecase = require("../usecase/payment");
-const bookingUsecase = require("../usecase/booking");
 const { updateStatusBasedOnMidtransResponse } = require("../helper/midtrans");
 
 exports.getPayments = async (req, res, next) => {
@@ -14,22 +13,6 @@ exports.getPayments = async (req, res, next) => {
         next(error);
     }
 };
-
-// exports.getPaymentById = async (req, res, next) => {
-//     try {
-//         const { id } = req.params
-
-//         if (id) {
-//             const data = await paymentUsecase.getPaymentById(id)
-//             res.status(200).json({
-//                 message: 'success',
-//                 data,
-//             })
-//         }
-//     } catch (error) {
-//         next(error)
-//     }
-// }
 
 exports.getPaymentByBookingId = async (req, res, next) => {
     try {
