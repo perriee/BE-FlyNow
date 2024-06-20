@@ -36,7 +36,7 @@ exports.createPayment = async (req, res, next) => {
 
         // GET USER DATA
         const user = req.user;
-      
+
         // CEK APAKAH BOOKING ID SUDAH ADA PAYMENT ID
         const isBookingHasPayment =
             await paymentUsecase.getPaymentByBookingId(bookingId);
@@ -67,7 +67,7 @@ exports.createPayment = async (req, res, next) => {
             },
             expiry: {
                 unit: "minutes",
-                duration: 60,
+                duration: 5,
             },
         };
 
@@ -141,21 +141,17 @@ exports.updatePayment = async (req, res, next) => {
 exports.paymentNotification = async (req, res, next) => {
     try {
         const data = req.body;
-        console.log("🚀 ~ exports.paymentNotification= ~ data:", data);
 
         const payment = await paymentUsecase.getPaymentByTransactionId(
             data.order_id,
         );
 
-        console.log("🚀 ~ exports.paymentNotification= ~ payment:", payment);
-
-        // Jika pembayaran ditemukan, update statusnya berdasarkan response Midtrans
+        // JIKA PEMBAYARAN DITEMUKAN, UPDATE STATUS DAN PAYMENT METHOD BERDASARKAN RESPONSE MIDTRANS
         if (payment) {
-            const result = await updateStatusBasedOnMidtransResponse(
+            await updateStatusBasedOnMidtransResponse(
                 payment.transactionId,
                 data,
             );
-            console.log("RESULT:", result);
         }
 
         res.status(200).json({
