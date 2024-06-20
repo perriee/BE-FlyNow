@@ -1,6 +1,5 @@
 const crypto = require("crypto");
 const paymentUsecase = require("../usecase/payment");
-const bookingUsecase = require("../usecase/booking");
 const { updateStatusBasedOnMidtransResponse } = require("../helper/midtrans");
 
 exports.getPayments = async (req, res, next) => {
@@ -14,22 +13,6 @@ exports.getPayments = async (req, res, next) => {
         next(error);
     }
 };
-
-// exports.getPaymentById = async (req, res, next) => {
-//     try {
-//         const { id } = req.params
-
-//         if (id) {
-//             const data = await paymentUsecase.getPaymentById(id)
-//             res.status(200).json({
-//                 message: 'success',
-//                 data,
-//             })
-//         }
-//     } catch (error) {
-//         next(error)
-//     }
-// }
 
 exports.getPaymentByBookingId = async (req, res, next) => {
     try {
@@ -49,23 +32,25 @@ exports.getPaymentByBookingId = async (req, res, next) => {
 
 exports.createPayment = async (req, res, next) => {
     try {
-        const { bookingId, paymentAmount, paymentMethod, paymentStatus } =
-            req.body;
+        const { bookingId, paymentAmount } = req.body;
 
         // GET USER DATA
         const user = req.user;
 
-        // CEK APAKAH BOOKING ID ADA ATAU TIDAK
-        // const currentBookingData = await bookingUsecase.getBookingId(bookingId);
-        // console.log(
-        //     "🚀 ~ exports.createPayment= ~ currentBookingData:",
-        //     currentBookingData,
-        // );
+        // CEK APAKAH BOOKING ID SUDAH ADA PAYMENT ID
+        const isBookingHasPayment =
+            await paymentUsecase.getPaymentByBookingId(bookingId);
+
+        if (isBookingHasPayment !== null) {
+            return res.status(400).json({
+                status: "Error",
+                message: "Booking already has payment",
+            });
+        }
 
         const transaction_id = `TRX-${crypto.randomBytes(4).toString("hex")}-${crypto.randomBytes(4).toString("hex")}`;
         const gross_amount = paymentAmount;
         const authString = btoa(process.env.MIDTRANS_SERVER_KEY);
-        console.log("🚀 ~ exports.createPayment= ~ authString:", authString);
 
         const payload = {
             transaction_details: {
@@ -78,11 +63,11 @@ exports.createPayment = async (req, res, next) => {
                 phone: user.phoneNumber,
             },
             callbacks: {
-                finish: "http://localhost:3000/api/payment/notification",
+                finish: "https://google.com",
             },
             expiry: {
                 unit: "minutes",
-                duration: 60,
+                duration: 5,
             },
         };
 
@@ -103,7 +88,7 @@ exports.createPayment = async (req, res, next) => {
 
         if (response.status !== 201) {
             return res.status(500).json({
-                status: "Error",
+                status: "error",
                 message: "Payment failed",
             });
         }
@@ -117,7 +102,7 @@ exports.createPayment = async (req, res, next) => {
         });
 
         res.status(200).json({
-            message: "Success create payment",
+            message: "success create payment",
             data,
         });
     } catch (error) {
@@ -153,53 +138,20 @@ exports.updatePayment = async (req, res, next) => {
     } catch (error) {}
 };
 
-// exports.paymentNotification = async (req, res, next) => {
-//     try {
-//         const data = req.body;
-//         console.log("🚀 ~ exports.paymentNotification= ~ data:", data);
-
-//         paymentUsecase
-//             .getPaymentById({
-//                 transactionId: data.order_id,
-//             })
-//             .then((payment) => {
-//                 if (payment) {
-//                     updateStatusBasedOnMidtransResponse(payment.id, data).then(
-//                         (result) => {
-//                             console.log("RESULT:", result);
-//                         },
-//                     );
-//                 }
-//             });
-//         console.log("🚀 ~ exports.paymentNotification= ~ payment:", payment);
-
-//         res.status(200).json({
-//             status: "Success",
-//             message: "OK",
-//         });
-//     } catch (error) {
-//         next(error);
-//     }
-// };
-
 exports.paymentNotification = async (req, res, next) => {
     try {
         const data = req.body;
-        console.log("🚀 ~ exports.paymentNotification= ~ data:", data);
 
         const payment = await paymentUsecase.getPaymentByTransactionId(
             data.order_id,
         );
 
-        console.log("🚀 ~ exports.paymentNotification= ~ payment:", payment);
-
-        // Jika pembayaran ditemukan, update statusnya berdasarkan response Midtrans
+        // JIKA PEMBAYARAN DITEMUKAN, UPDATE STATUS DAN PAYMENT METHOD BERDASARKAN RESPONSE MIDTRANS
         if (payment) {
-            const result = await updateStatusBasedOnMidtransResponse(
+            await updateStatusBasedOnMidtransResponse(
                 payment.transactionId,
                 data,
             );
-            console.log("RESULT:", result);
         }
 
         res.status(200).json({
