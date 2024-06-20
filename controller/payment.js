@@ -155,35 +155,6 @@ exports.updatePayment = async (req, res, next) => {
     } catch (error) {}
 };
 
-// exports.paymentNotification = async (req, res, next) => {
-//     try {
-//         const data = req.body;
-//         console.log("🚀 ~ exports.paymentNotification= ~ data:", data);
-
-//         paymentUsecase
-//             .getPaymentById({
-//                 transactionId: data.order_id,
-//             })
-//             .then((payment) => {
-//                 if (payment) {
-//                     updateStatusBasedOnMidtransResponse(payment.id, data).then(
-//                         (result) => {
-//                             console.log("RESULT:", result);
-//                         },
-//                     );
-//                 }
-//             });
-//         console.log("🚀 ~ exports.paymentNotification= ~ payment:", payment);
-
-//         res.status(200).json({
-//             status: "Success",
-//             message: "OK",
-//         });
-//     } catch (error) {
-//         next(error);
-//     }
-// };
-
 exports.paymentNotification = async (req, res, next) => {
     try {
         const data = req.body;
