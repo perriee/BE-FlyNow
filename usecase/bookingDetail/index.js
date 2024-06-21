@@ -28,7 +28,8 @@ exports.createBulkBookingDetail = async (payload, t) => {
     const promises = payload.map(async (bookingDetail) => {
         const { bookingId, flightId, passengerId, seatCode } = bookingDetail;
         const seatId = await seatsRepo.checkSeat(flightId, seatCode, t);
-        await seatsRepo.updateSeatAvailability(seatId, false, t);
+        // NOTES: dihapus sementara karena payment expiry tidak bisa
+        // await seatsRepo.updateSeatAvailability(seatId, false, t);
         return detailsRepo.createBookingDetail(
             {
                 bookingId,
