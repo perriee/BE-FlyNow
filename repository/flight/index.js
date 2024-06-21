@@ -1,6 +1,6 @@
 const { where } = require("sequelize");
 const { Op, Sequelize } = require("sequelize");
-const { flight, airport, airline } = require("../../models");
+const { flight, airport, airline, seat } = require("../../models");
 
 exports.searchFlight = async (query) => {
     let order;
@@ -44,10 +44,67 @@ exports.searchFlight = async (query) => {
                 ],
             ];
             break;
+        case "duration-asc":
+            order = [
+                [
+                    Sequelize.literal(
+                        `EXTRACT(EPOCH FROM ("arrivalTime" - "departureTime")) / 60`,
+                    ),
+                    "ASC",
+                ],
+            ];
+            break;
+        case "duration-desc":
+            order = [
+                [
+                    Sequelize.literal(
+                        `EXTRACT(EPOCH FROM ("arrivalTime" - "departureTime")) / 60`,
+                    ),
+                    "DESC",
+                ],
+            ];
+            break;
         default:
             order = [["departureTime", "ASC"]];
             break;
     }
+
+    const page = query.page || 1;
+    const pageSize = query.pageSize || 9999;
+    const offset = (page - 1) * pageSize;
+    const limit = pageSize;
+
+    // Query to count total items for departure flights
+    const totalDepartureFlights = await flight.count({
+        where: {
+            [Op.and]: [
+                Sequelize.where(
+                    Sequelize.fn("DATE", Sequelize.col("departureTime")),
+                    query.dd,
+                ),
+            ],
+            flightClass: query.class,
+        },
+        include: [
+            {
+                model: airport,
+                as: "departureAirport",
+                where: {
+                    airportCode: query.da,
+                },
+            },
+            {
+                model: airport,
+                as: "arrivalAirport",
+                where: {
+                    airportCode: query.aa,
+                },
+            },
+            {
+                model: airline,
+            },
+        ],
+    });
 
     const departureFlights = await flight.findAll({
         where: {
@@ -78,10 +135,46 @@ exports.searchFlight = async (query) => {
                 model: airline,
             },
         ],
-        order,
+        order: order,
+        limit: limit,
+        offset: offset,
     });
 
+    const totalDeparturePages = Math.ceil(totalDepartureFlights / pageSize);
+
     if (query.rd) {
+        // Query to count total items for return flights
+        const totalReturnFlights = await flight.count({
+            where: {
+                [Op.and]: [
+                    Sequelize.where(
+                        Sequelize.fn("DATE", Sequelize.col("departureTime")),
+                        query.rd,
+                    ),
+                ],
+                flightClass: query.class,
+            },
+            include: [
+                {
+                    model: airport,
+                    as: "departureAirport",
+                    where: {
+                        airportCode: query.aa,
+                    },
+                },
+                {
+                    model: airport,
+                    as: "arrivalAirport",
+                    where: {
+                        airportCode: query.da,
+                    },
+                },
+                {
+                    model: airline,
+                },
+            ],
+        });
+
         const returnFlights = await flight.findAll({
             where: {
                 [Op.and]: [
@@ -111,11 +204,28 @@ exports.searchFlight = async (query) => {
                     model: airline,
                 },
             ],
-            order,
+            order: order,
+            limit: limit,
+            offset: offset,
         });
-        return { departureFlights, returnFlights };
+
+        const totalReturnPages = Math.ceil(totalReturnFlights / pageSize);
+
+        return {
+            totalDeparturePages,
+            totalDepartureFlights,
+            totalReturnPages,
+            totalReturnFlights,
+            departureFlights,
+            returnFlights,
+        };
     }
-    return { departureFlights };
+
+    return {
+        totalDeparturePages,
+        totalDepartureFlights,
+        departureFlights,
+    };
 };
 
 exports.getAllFlights = async () => {
@@ -166,6 +276,22 @@ exports.getFlight = async (id) => {
 
 exports.createFlight = async (payload) => {
     const data = await flight.create(payload);
+    const rows = ["A", "B", "C", "D", "E", "F"];
+    const seatCountPerRow = 12;
+
+    // Buat semua seat dengan menggunakan Promise.all untuk menunggu semua seat selesai dibuat
+    await Promise.all(
+        [...Array(seatCountPerRow).keys()].flatMap((i) => {
+            return rows.map((row) => {
+                return seat.create({
+                    seatCode: `${i + 1}${row}`,
+                    seatAvailable: true,
+                    flightId: data.id,
+                });
+            });
+        }),
+    );
+
     return data;
 };
 

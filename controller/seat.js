@@ -107,14 +107,35 @@ exports.updateSeat = async (req, res, next) => {
 };
 
 exports.deleteSeat = async (req, res, next) => {
-	try {
-		const { id } = req.params;
-		const data = await seatUsecase.deleteSeat(id);
-		res.status(200).json({
-			message: "success delete data",
-			data,
-		});
-	} catch (error) {
-		next(error);
-	}
+    try {
+        const { id } = req.params;
+        const data = await seatUsecase.deleteSeat(id);
+        res.status(200).json({
+            message: "success delete data",
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getSeatByFlightId = async (req, res, next) => {
+    try {
+        const { flightId } = req.params;
+        const data = await seatUsecase.getSeatByFlightId(flightId);
+
+        if (!data) {
+            return next({
+                message: `Seat with flight id ${id} not found!`,
+                statusCode: 404,
+            });
+        }
+
+        res.status(200).json({
+            message: "success get data by flightId",
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
 };

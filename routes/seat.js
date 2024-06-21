@@ -14,4 +14,8 @@ router
     .put(authMiddleware(), seatController.updateSeat)
     .delete(authMiddleware(), seatController.deleteSeat);
 
+router
+    .route("/book/:flightId")
+    .get(seatController.getSeatByFlightId);
+
 module.exports = router;
