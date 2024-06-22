@@ -1,4 +1,3 @@
-const bcrypt = require("bcrypt");
 const { sendEmail } = require("../helper/nodemailer");
 const {
     register,
@@ -14,8 +13,11 @@ const {
 } = require("../usecase/auth");
 const { createToken } = require("../usecase/auth/util");
 const { generateOTP, checkOTP } = require("../helper/otp");
-
-const { CLIENT_URL, MAIL_USERNAME } = process.env;
+const {
+    forgotPasswordEmail,
+    registerEmail,
+    resendOTPEmail,
+} = require("../templates/email");
 
 exports.register = async (req, res, next) => {
     try {
@@ -67,18 +69,7 @@ exports.register = async (req, res, next) => {
             otpCreatedAt,
         });
 
-        const emailTemplate = {
-            from: {
-                name: "FlyNow Support",
-                address: MAIL_USERNAME,
-            },
-            to: email,
-            subject: "Kode Verifikasi Email (OTP)",
-            html: `
-                <h3>Silahkan masukkan OTP di bawah ini untuk memverifikasi email kamu</h3> 
-                <p><b>${otp}</b></p>
-                <p><i>Kode OTP hanya berlaku 15 menit dan bersifat rahasia. Mohon untuk tidak membagikan kode ini kepada siapapun termasuk pihak yang mengatasnamakan FlyNow.</i></p>`,
-        };
+        const emailTemplate = registerEmail(email, name, otp);
 
         sendEmail(emailTemplate);
 
@@ -180,25 +171,14 @@ exports.forgotPassword = async (req, res, next) => {
             });
         }
 
-        const { id } = user;
+        const { id, name } = user;
         const { token } = createToken(id);
 
         await updateUserResetPwdToken(id, {
             resetPasswordToken: token,
         });
 
-        const emailTemplate = {
-            from: {
-                name: "FlyNow Support",
-                address: MAIL_USERNAME,
-            },
-            to: email,
-            subject: "Link Reset Password",
-            html: `
-                <h3>Silahkan klik link dibawah ini untuk reset password</h3> 
-                <p>${CLIENT_URL}/reset-password/${token}</p>
-            `,
-        };
+        const emailTemplate = forgotPasswordEmail(email, name, token);
 
         sendEmail(emailTemplate);
 
@@ -276,18 +256,7 @@ exports.resendOTP = async (req, res, next) => {
             otpCreatedAt,
         });
 
-        const emailTemplate = {
-            from: {
-                name: "FlyNow Support",
-                address: MAIL_USERNAME,
-            },
-            to: email,
-            subject: "Kode Verifikasi Email (OTP)",
-            html: `
-                <h3>Silahkan masukkan OTP di bawah ini untuk memverifikasi email kamu</h3> 
-                <p><b>${otp}</b></p>
-                <p><i>Kode OTP hanya berlaku 15 menit dan bersifat rahasia. Mohon untuk tidak membagikan kode ini kepada siapapun termasuk pihak yang mengatasnamakan FlyNow.</i></p>`,
-        };
+        const emailTemplate = resendOTPEmail(email, user.name, otp);
 
         sendEmail(emailTemplate);
 
