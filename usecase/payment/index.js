@@ -8,6 +8,7 @@ exports.getPayments = async () => {
 
 exports.getPaymentById = async (id) => {
     const data = await paymentRepo.getPaymentById(id);
+    return data;
 };
 
 exports.getPaymentByTransactionId = async (transactionId) => {
