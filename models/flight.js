@@ -12,13 +12,14 @@ module.exports = (sequelize, DataTypes) => {
             flight.hasMany(models.seat, { foreignKey: "flightId" });
             flight.hasMany(models.booking, { foreignKey: "departureFlightId" });
             flight.hasMany(models.booking, { foreignKey: "returnFlightId" });
+            flight.hasMany(models.notification, { foreignKey: "flightId" });
             flight.belongsTo(models.airline, { foreignKey: "airlineId" });
             flight.belongsTo(models.airport, {
-                as: 'departureAirport',
+                as: "departureAirport",
                 foreignKey: "departureAirportId",
             });
             flight.belongsTo(models.airport, {
-                as: 'arrivalAirport',
+                as: "arrivalAirport",
                 foreignKey: "arrivalAirportId",
             });
         }
