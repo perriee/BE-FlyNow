@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const paymentUsecase = require("../usecase/payment");
 const { updateStatusBasedOnMidtransResponse } = require("../helper/midtrans");
+require("dotenv").config();
 
 exports.getPayments = async (req, res, next) => {
     try {

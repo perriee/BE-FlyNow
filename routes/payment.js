@@ -9,7 +9,7 @@ router
     .post(authMiddleware(), paymentController.createPayment)
     .put(authMiddleware(), paymentController.updatePayment);
 
-router.post("/notification", paymentController.paymentNotification);
+// router.post("/notification", paymentController.paymentNotification);
 
 router
     .route("/:bookingId")
