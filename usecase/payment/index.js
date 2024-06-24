@@ -18,6 +18,7 @@ exports.getPaymentByTransactionId = async (transactionId) => {
 
 exports.getPaymentByBookingId = async (bookingId) => {
     const data = await paymentRepo.getPaymentByBookingId(bookingId);
+    console.log("🚀 ~ USECASE.getPaymentByBookingId= ~ data:", data);
 
     if (data) {
         const departureFlightId = data.booking.departureFlightId;

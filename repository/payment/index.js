@@ -26,6 +26,7 @@ exports.getPaymentByBookingId = async (bookingId) => {
             },
         ],
     });
+
     return data;
 };
 

@@ -12,14 +12,6 @@ exports.updateStatusBasedOnMidtransResponse = async (
         )
         .digest("hex");
 
-    console.log("TRX ID:", transactionId);
-    console.log("DATA FROM MIDTRANS:", dataFromMidtrans);
-    console.log("HASH ->", hash);
-    console.log(
-        "dataFromMidtrans.signature_key ->",
-        dataFromMidtrans.signature_key,
-    );
-
     if (dataFromMidtrans.signature_key !== hash) {
         return {
             status: "Error",
@@ -36,6 +28,7 @@ exports.updateStatusBasedOnMidtransResponse = async (
             const payload = {
                 paymentStatus: "paid",
                 paymentMethod: dataFromMidtrans.payment_type,
+                expiryTime: dataFromMidtrans.expiry_time,
             };
 
             const transaction = await paymentUsecase.updatePaymentStatus(
@@ -49,6 +42,7 @@ exports.updateStatusBasedOnMidtransResponse = async (
         const payload = {
             paymentStatus: "paid",
             paymentMethod: dataFromMidtrans.payment_type,
+            expiryTime: dataFromMidtrans.expiry_time,
         };
 
         const transaction = await paymentUsecase.updatePaymentStatus(
@@ -57,13 +51,10 @@ exports.updateStatusBasedOnMidtransResponse = async (
         );
 
         responseData = transaction;
-    } else if (
-        transactionStatus == "cancel" ||
-        transactionStatus == "deny" ||
-        transactionStatus == "expire"
-    ) {
+    } else if (transactionStatus == "expire") {
         const payload = {
-            paymentStatus: "canceled",
+            paymentStatus: "expired",
+            expiryTime: dataFromMidtrans.expiry_time,
         };
 
         const transaction = await paymentUsecase.updatePaymentStatus(
@@ -75,6 +66,7 @@ exports.updateStatusBasedOnMidtransResponse = async (
     } else if (transactionStatus == "pending") {
         const payload = {
             paymentStatus: "pending",
+            expiryTime: dataFromMidtrans.expiry_time,
         };
 
         const transaction = await paymentUsecase.updatePaymentStatus(
