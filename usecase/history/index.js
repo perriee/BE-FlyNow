@@ -5,6 +5,7 @@ const flightRepo = require("../../repository/flight");
 
 exports.getHistories = async (userId) => {
     const bookings = await bookingRepo.getBookingByUserId(userId);
+    console.log(bookings);
 
     const data = await Promise.all(
         bookings.map(async (bookingInstance, index) => {
@@ -81,7 +82,7 @@ exports.getHistoriesByPaymentStatus = async (userId, paymentStatus) => {
     const allData = await this.getHistories(userId);
     const filteredData = allData.filter((data) => {
         return (
-            data.payment.paymentStatus.toLowerCase() ==
+            data.payment.paymentStatus.toLowerCase() ===
             paymentStatus.toLowerCase()
         );
     });

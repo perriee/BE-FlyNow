@@ -27,9 +27,6 @@ exports.getBookingId = async (id) => {
                 model: user,
                 attributes: ["id", "name", "email", "image", "phoneNumber"],
             },
-            {
-                model: flight,
-            },
         ],
     });
 

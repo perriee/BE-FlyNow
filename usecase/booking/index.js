@@ -5,17 +5,33 @@ const { sequelize } = require("../../models");
 const bookingRepo = require("../../repository/booking");
 const passengerRepo = require("../../repository/passenger");
 const bookingDetailUseCase = require("../bookingDetail");
+const flightRepo = require("../../repository/flight");
 
 exports.getBookings = async () => {
     const data = await bookingRepo.getBookings();
     return data;
 };
 
-// TODO: Harus join table bookings, bookingDetails, passengers, seats, flights, users, airline, airport, dan payment
-// TODO: Harus join table bookings, bookingDetails, passengers, seats, flights, users, airline, airport, dan payment
 exports.getBookingId = async (id) => {
     const data = await bookingRepo.getBookingId(id);
-    return data;
+    if (data) {
+        const departureFlightId = data.departureFlightId;
+        const returnFlightId = data.returnFlightId;
+
+        const departureFlight = await flightRepo.getFlight(departureFlightId);
+
+        let returnFlight = null;
+        if (returnFlightId) {
+            returnFlight = await flightRepo.getFlight(returnFlightId);
+        }
+
+        const result = data.toJSON();
+        result.departureFlight = departureFlight;
+        result.returnFlight = returnFlight;
+
+        return result;
+    }
+    return null;
 };
 
 exports.createBooking = async (payload) => {
@@ -108,7 +124,6 @@ exports.updateBooking = async (id, payload) => {
     const data = await bookingRepo.getBookingId(id);
     return data;
 };
-
 
 exports.deleteBooking = async (id) => {
     const data = await bookingRepo.deleteBooking(id);
