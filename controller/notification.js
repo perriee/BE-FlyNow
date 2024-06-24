@@ -16,12 +16,6 @@ exports.createNotification = async (req, res, next) => {
     try {
         const { userId, flightId, paymentId, type, message } = req.body;
 
-        if (!userId || userId === "") {
-            return next({
-                message: "User ID is required!",
-                statusCode: 400,
-            });
-        }
         if (!type || type === "") {
             return next({
                 message: "Type is required!",
@@ -35,12 +29,16 @@ exports.createNotification = async (req, res, next) => {
             });
         }
         let payload = {
-            userId,
             type,
             message,
+            isRead: false,
         };
 
         // Advanced validation
+        if (userId && userId !== "") {
+            payload.userId = userId;
+        }
+
         if (type === "flight" && (!flightId || flightId === "")) {
             return next({
                 message: "Flight ID is required!",
@@ -55,7 +53,14 @@ exports.createNotification = async (req, res, next) => {
                 message: "Payment ID is required!",
                 statusCode: 400,
             });
-        } else {
+        } else if (type === "payment") {
+            if (!payload.userId || payload.userId === "") {
+                return next({
+                    message: "User ID is required!",
+                    statusCode: 400,
+                });
+            }
+
             payload.paymentId = paymentId;
         }
 
@@ -106,7 +111,7 @@ exports.getNotificationByID = async (req, res, next) => {
 
 exports.getAllNotificationsByUserID = async (req, res, next) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user.id;
         const data = await getAllNotificationsByUserID(userId);
 
         res.status(200).json({
@@ -120,7 +125,7 @@ exports.getAllNotificationsByUserID = async (req, res, next) => {
 
 exports.getPaymentNotificationsByUserID = async (req, res, next) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user.id;
         const data = await getPaymentNotificationsByUserID(userId);
 
         res.status(200).json({
@@ -134,7 +139,7 @@ exports.getPaymentNotificationsByUserID = async (req, res, next) => {
 
 exports.getFlightNotificationsByUserID = async (req, res, next) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user.id;
         const data = await getFlightNotificationsByUserID(userId);
 
         res.status(200).json({
@@ -148,7 +153,7 @@ exports.getFlightNotificationsByUserID = async (req, res, next) => {
 
 exports.getPromoNotificationsByUserID = async (req, res, next) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user.id;
         const data = await getPromoNotificationsByUserID(userId);
 
         res.status(200).json({

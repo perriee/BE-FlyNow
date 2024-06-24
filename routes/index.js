@@ -25,6 +25,6 @@ router.use("/flight", flight);
 router.use("/booking", booking);
 router.use("/history", history);
 router.use("/booking-detail", authMiddleware(), bookingDetail);
-router.use("/notification", notification);
+router.use("/notification", authMiddleware(), notification);
 
 module.exports = router;

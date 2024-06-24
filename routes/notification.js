@@ -14,24 +14,21 @@ const {
     deleteNotification,
     searchNotification,
 } = require("../controller/notification");
-const { authMiddleware } = require("../middleware/auth");
-
-/* For "Admin" (won't be directly called in FE) */
-router
-    .route("/")
-    .post(authMiddleware(), createNotification)
-    .get(authMiddleware(), getAllNotifications);
-
-router
-    .route("/:id")
-    .get(authMiddleware(), getNotificationByID)
-    .patch(authMiddleware(), updateNotification)
-    .delete(authMiddleware(), deleteNotification);
 
 /* For Users (will be directly called in FE) */
-router.get("/all", authMiddleware(), getAllNotificationsByUserID);
-router.get("/payment", authMiddleware(), getPaymentNotificationsByUserID);
-router.get("/flight", authMiddleware(), getFlightNotificationsByUserID);
-router.get("/promo", authMiddleware(), getPromoNotificationsByUserID);
-router.patch("/:id", authMiddleware(), readNotification);
-router.get("/search", authMiddleware(), searchNotification);
+router.get("/all", getAllNotificationsByUserID);
+router.get("/payment", getPaymentNotificationsByUserID);
+router.get("/flight", getFlightNotificationsByUserID);
+router.get("/promo", getPromoNotificationsByUserID);
+router.patch("/read/:id", readNotification);
+router.get("/search", searchNotification);
+
+/* For "Admin" (won't be directly called in FE) */
+router.route("/").post(createNotification).get(getAllNotifications);
+router
+    .route("/:id")
+    .get(getNotificationByID)
+    .patch(updateNotification)
+    .delete(deleteNotification);
+
+module.exports = router;

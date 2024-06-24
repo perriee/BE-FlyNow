@@ -21,7 +21,7 @@ exports.getNotificationByID = async (id) => {
 };
 
 exports.getAllNotificationsByUserID = async (userId) => {
-    return await getNotificationsByUserID(userId);
+    return await getNotificationsByUserID(userId, {});
 };
 
 exports.getPaymentNotificationsByUserID = async (userId) => {
