@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
                 as: 'arrivalAirport',
                 foreignKey: "arrivalAirportId",
             });
+            flight.hasMany(models.favoriteFlight, { foreignKey: "flightId" });
         }
     }
     flight.init(
