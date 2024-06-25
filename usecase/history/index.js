@@ -5,7 +5,6 @@ const flightRepo = require("../../repository/flight");
 
 exports.getHistories = async (userId) => {
     const bookings = await bookingRepo.getBookingByUserId(userId);
-    console.log(bookings);
 
     const data = await Promise.all(
         bookings.map(async (bookingInstance, index) => {
@@ -35,6 +34,7 @@ exports.getHistories = async (userId) => {
                 (detail) =>
                     detail.seat.flightId == bookingPlain.departureFlightId,
             );
+
             let returnDetails = null;
             if (bookingPlain.returnFlightId !== null) {
                 returnDetails = bookingDetails.filter(
@@ -81,10 +81,12 @@ exports.getHistoriesByCity = async (userId, city) => {
 exports.getHistoriesByPaymentStatus = async (userId, paymentStatus) => {
     const allData = await this.getHistories(userId);
     const filteredData = allData.filter((data) => {
-        return (
-            data.payment.paymentStatus.toLowerCase() ===
-            paymentStatus.toLowerCase()
-        );
+        if (data.payment !== null) {
+            return (
+                data.payment.paymentStatus.toLowerCase() ===
+                paymentStatus.toLowerCase()
+            );
+        }
     });
     return filteredData;
 };
