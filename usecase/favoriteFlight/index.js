@@ -4,27 +4,30 @@ const flightRepo = require("../../repository/flight/index");
 exports.createFavoriteFlight = async (payload) =>
     favoriteFlightRepo.createFavoriteFlight(payload);
 
-exports.getFavoriteFlightByFlightId = async (flightId) => {
-    const favoriteFlight =
-        await favoriteFlightRepo.getFavoriteFlightByFlightId(flightId);
-    const flightDetail = await flightRepo.getFlight(flightId);
+exports.getFavoriteFlightById = async (id) => {
+    const favoriteFlight = await favoriteFlightRepo.getFavoriteFlightById(id);
+    const flightDetail = await flightRepo.getFlight(favoriteFlight.flightId);
     const responseData = {
         id: favoriteFlight.id,
         flightId: favoriteFlight.flightId,
         airlineId: flightDetail.airline.id,
         airline: flightDetail.airline.airlineName,
+
         departureAirportId: flightDetail.departureAirport.id,
         departureAirport: flightDetail.departureAirport.airportName,
         departureCity: flightDetail.departureAirport.city,
+
         arrivalAirportId: flightDetail.arrivalAirport.id,
         arrivalAirport: flightDetail.arrivalAirport.airportName,
-        arrivalCity: flightDetail.departureAirport.city,
+        arrivalCity: flightDetail.arrivalAirport.city,
+
         departureTime: flightDetail.departureTime,
         price: flightDetail.price,
         discount: favoriteFlight.discount,
         description: favoriteFlight.description,
         isFavorite: favoriteFlight.isFavorite,
         image: favoriteFlight.image,
+
         createdAt: favoriteFlight.createdAt,
         updatedAt: favoriteFlight.updatedAt,
         deletedAt: favoriteFlight.deletedAt,
@@ -42,18 +45,22 @@ exports.getAllFavoriteFlights = async () => {
             flightId: flight.flightId,
             airlineId: flightDetail.airline.id,
             airline: flightDetail.airline.airlineName,
+
             departureAirportId: flightDetail.departureAirport.id,
             departureAirport: flightDetail.departureAirport.airportName,
             departureCity: flightDetail.departureAirport.city,
+
             arrivalAirportId: flightDetail.arrivalAirport.id,
             arrivalAirport: flightDetail.arrivalAirport.airportName,
-            arrivalCity: flightDetail.departureAirport.city,
+            arrivalCity: flightDetail.arrivalAirport.city,
+
             departureTime: flightDetail.departureTime,
             price: flightDetail.price,
             discount: flight.discount,
             description: flight.description,
             isFavorite: flight.isFavorite,
             image: flight.image,
+
             createdAt: flight.createdAt,
             updatedAt: flight.updatedAt,
             deletedAt: flight.deletedAt,
@@ -65,13 +72,10 @@ exports.getAllFavoriteFlights = async () => {
     return responseData;
 };
 
-exports.editFavoriteFlightbyFlightId = async (flightId, payload) => {
-    const data = await favoriteFlightRepo.editFavoriteFlightbyFlightId(
-        flightId,
-        payload,
-    );
+exports.editFavoriteFlightById = async (id, payload) => {
+    const data = await favoriteFlightRepo.editFavoriteFlightById(id, payload);
     return data;
 };
 
-exports.deleteFavoriteFlight = async (flightId) =>
-    favoriteFlightRepo.deleteFavoriteFlight(flightId);
+exports.deleteFavoriteFlightById = async (id) =>
+    favoriteFlightRepo.deleteFavoriteFlightById(id);
