@@ -58,9 +58,9 @@ exports.createBooking = async (payload, t) => {
     // Kirim notifikasi jika pemesanan berhasil dibuat
     if (data) {
         const notifPayload = {
-            userId,
-            type: "payment",
-            message: `Siap untuk terbang dari ${departureCity1} ke ${arrivalCity1} dan dari ${departureCity2} ke ${arrivalCity2}? Segera lakukan pembayaran untuk pesanan dengan kode ${bookingCode}!`,
+            userId: payload.userId,
+            type: "booking",
+            message: `Pesanan dengan kode ${bookingCode} berhasil dibuat! Segera mulai pembayaran untuk menyelesaikan pemesanan Anda.`,
         };
         await createNotification(notifPayload);
     }

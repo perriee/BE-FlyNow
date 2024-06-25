@@ -333,8 +333,7 @@ exports.updateFlight = async (id, payload) => {
         let notifPayload = {
             flightId: id,
             type: "flight",
-            message:
-                "Terdapat perubahan pada jadwal dan lokasi keberangkatan Anda. Mohon maaf atas ketidaknyamanan ini, harap periksa detail penerbangan terbaru, terima kasih atas pengertiannya",
+            message: `Terdapat perubahan pada penerbangan Anda dengan kode ${data[0].dataValues.flightCode}. Mohon maaf atas ketidaknyamanan ini, harap periksa detail penerbangan terbaru, terima kasih atas pengertiannya`,
         };
         await createNotification(notifPayload);
 
