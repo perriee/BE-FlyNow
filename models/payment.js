@@ -18,10 +18,11 @@ module.exports = (sequelize, DataTypes) => {
             bookingId: DataTypes.BIGINT,
             paymentAmount: DataTypes.INTEGER,
             paymentMethod: DataTypes.STRING,
-            paymentStatus: DataTypes.ENUM("paid", "pending", "canceled"),
+            paymentStatus: DataTypes.ENUM("paid", "pending", "expired"),
             transactionId: DataTypes.STRING,
             snapToken: DataTypes.STRING,
             snapRedirectUrl: DataTypes.STRING,
+            expiryTime: DataTypes.DATE,
         },
         {
             sequelize,

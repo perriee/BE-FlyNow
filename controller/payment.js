@@ -1,6 +1,8 @@
 const crypto = require("crypto");
 const paymentUsecase = require("../usecase/payment");
+const bookingUsecase = require("../usecase/booking");
 const { updateStatusBasedOnMidtransResponse } = require("../helper/midtrans");
+const { CLIENT_URL, MIDTRANS_SERVER_KEY } = process.env;
 
 exports.getPayments = async (req, res, next) => {
     try {
@@ -48,9 +50,77 @@ exports.createPayment = async (req, res, next) => {
             });
         }
 
+        const detailBooking = await bookingUsecase.getBookingId(bookingId);
+        const { departureFlight, returnFlight } = detailBooking;
+
         const transaction_id = `TRX-${crypto.randomBytes(4).toString("hex")}-${crypto.randomBytes(4).toString("hex")}`;
         const gross_amount = paymentAmount;
-        const authString = btoa(process.env.MIDTRANS_SERVER_KEY);
+        const authString = btoa(MIDTRANS_SERVER_KEY);
+
+        let item_details_data = [];
+
+        // PUSH DATA DEPARTURE FLIGHT FOR ADULTS
+        if (detailBooking.numAdults > 0) {
+            item_details_data.push({
+                id: departureFlight.id,
+                price: departureFlight.price,
+                name: "Adult - " + departureFlight.flightCode,
+                quantity: detailBooking.numAdults,
+            });
+        }
+
+        // PUSH DATA DEPARTURE FLIGHT FOR CHILDREN
+        if (detailBooking.numChildren > 0) {
+            item_details_data.push({
+                id: departureFlight.id,
+                price: departureFlight.price,
+                name: "Child - " + departureFlight.flightCode,
+                quantity: detailBooking.numChildren,
+            });
+        }
+
+        // PUSH DATA DEPARTURE FLIGHT FOR BABIES
+        if (detailBooking.numBabies > 0) {
+            item_details_data.push({
+                id: departureFlight.id,
+                price: 0,
+                name: "Baby - " + departureFlight.flightCode,
+                quantity: detailBooking.numBabies,
+            });
+        }
+
+        // CHECK IF RETURN FLIGHT EXISTS
+        if (returnFlight) {
+            // PUSH DATA RETURN FLIGHT FOR ADULTS
+            if (detailBooking.numAdults > 0) {
+                item_details_data.push({
+                    id: returnFlight.id,
+                    price: returnFlight.price,
+                    name: "Adult - " + returnFlight.flightCode,
+                    quantity: detailBooking.numAdults,
+                });
+            }
+
+            // PUSH DATA RETURN FLIGHT FOR CHILDREN
+            if (detailBooking.numChildren > 0) {
+                item_details_data.push({
+                    id: returnFlight.id,
+                    price: returnFlight.price,
+                    name: "Child - " + returnFlight.flightCode,
+                    quantity: detailBooking.numChildren,
+                });
+            }
+
+            // PUSH DATA RETURN FLIGHT FOR BABIES
+            if (detailBooking.numBabies > 0) {
+                item_details_data.push({
+                    id: returnFlight.id,
+                    price: 0,
+                    name: "Baby - " + returnFlight.flightCode,
+                    quantity: detailBooking.numBabies,
+                });
+            }
+        }
 
         const payload = {
             transaction_details: {
@@ -62,12 +132,14 @@ exports.createPayment = async (req, res, next) => {
                 email: user.email,
                 phone: user.phoneNumber,
             },
+            item_details: item_details_data,
             callbacks: {
-                finish: "https://google.com",
+                finish: `${CLIENT_URL}/flight/payment/success`,
+                error: CLIENT_URL,
             },
             expiry: {
-                unit: "minutes",
-                duration: 5,
+                unit: "hour",
+                duration: 2,
             },
         };
 
