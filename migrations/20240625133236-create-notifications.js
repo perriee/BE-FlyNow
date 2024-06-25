@@ -23,13 +23,6 @@ module.exports = {
                     key: "id",
                 },
             },
-            paymentId: {
-                type: Sequelize.INTEGER,
-                references: {
-                    model: "payments",
-                    key: "id",
-                },
-            },
             message: {
                 type: Sequelize.TEXT,
             },

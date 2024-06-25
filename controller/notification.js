@@ -15,8 +15,7 @@ const {
 
 exports.createNotification = async (req, res, next) => {
     try {
-        const { userId, flightId, paymentId, bookingId, type, message } =
-            req.body;
+        const { userId, flightId, type, message } = req.body;
 
         if (!type || type === "") {
             return next({
@@ -50,36 +49,18 @@ exports.createNotification = async (req, res, next) => {
             payload.flightId = flightId;
         }
 
-        if (type === "payment" && (!paymentId || paymentId === "")) {
+        if (type === "payment" && (!userId || userId === "")) {
             return next({
-                message: "Payment ID is required!",
+                message: "User ID is required!",
                 statusCode: 400,
             });
-        } else if (type === "payment") {
-            if (!payload.userId || payload.userId === "") {
-                return next({
-                    message: "User ID is required!",
-                    statusCode: 400,
-                });
-            }
-
-            payload.paymentId = paymentId;
         }
 
-        if (type === "booking" && (!bookingId || bookingId === "")) {
+        if (type === "booking" && (!userId || userId === "")) {
             return next({
-                message: "Booking ID is required!",
+                message: "User ID is required!",
                 statusCode: 400,
             });
-        } else if (type === "booking") {
-            if (!payload.userId || payload.userId === "") {
-                return next({
-                    message: "User ID is required!",
-                    statusCode: 400,
-                });
-            }
-
-            payload.bookingId = bookingId;
         }
 
         const data = await createNotification(payload);
