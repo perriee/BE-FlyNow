@@ -47,10 +47,10 @@ exports.createFavoriteFlight = async (payload) => {
     }
 };
 
-exports.getFavoriteFlightByFlightId = async (flightId) => {
+exports.getFavoriteFlightById = async (id) => {
     const data = await favoriteFlight.findOne({
         where: {
-            flightId,
+            id,
         },
     });
 
@@ -63,16 +63,16 @@ exports.getFavoriteFlightByFlightId = async (flightId) => {
 
 exports.getAllFavoriteFlights = async () => favoriteFlight.findAll();
 
-exports.editFavoriteFlightbyFlightId = async (flightId, payload) => {
+exports.editFavoriteFlightById = async (id, payload) => {
     await favoriteFlight.update(payload, {
         where: {
-            flightId,
+            id,
         },
     });
 
     const data = await favoriteFlight.findOne({
         where: {
-            flightId,
+            id,
         },
     });
 
@@ -83,10 +83,10 @@ exports.editFavoriteFlightbyFlightId = async (flightId, payload) => {
     return data;
 };
 
-exports.deleteFavoriteFlight = async (flightId) => {
+exports.deleteFavoriteFlightById = async (id) => {
     const foundFavoriteFlight = await favoriteFlight.findOne({
         where: {
-            flightId,
+            id,
         },
     });
 
@@ -97,7 +97,7 @@ exports.deleteFavoriteFlight = async (flightId) => {
     // Delete the favorite flight
     await favoriteFlight.destroy({
         where: {
-            flightId,
+            id,
         },
     });
 };

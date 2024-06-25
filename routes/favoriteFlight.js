@@ -1,20 +1,24 @@
 const { Router } = require("express");
 const {
     createFavoriteFlight,
-    deleteFavoriteFlight,
-    editFavoriteFlightbyFlightId,
+    deleteFavoriteFlightById,
+    editFavoriteFlightById,
     getAllFavoriteFlights,
-    getFavoriteFlightByFlightId,
+    getFavoriteFlightById,
 } = require("../controller/favoriteFlight");
+const { authMiddleware } = require("../middleware/auth");
 
 const router = Router();
 
-router.route("/").post(createFavoriteFlight).get(getAllFavoriteFlights);
+router
+    .route("/")
+    .post(authMiddleware(), createFavoriteFlight)
+    .get(getAllFavoriteFlights);
 
 router
-    .route("/:flightId")
-    .get(getFavoriteFlightByFlightId)
-    .patch(editFavoriteFlightbyFlightId)
-    .delete(deleteFavoriteFlight);
+    .route("/:id")
+    .get(getFavoriteFlightById)
+    .patch(authMiddleware(), editFavoriteFlightById)
+    .delete(authMiddleware(), deleteFavoriteFlightById);
 
 module.exports = router;

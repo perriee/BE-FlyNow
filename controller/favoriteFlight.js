@@ -51,12 +51,11 @@ exports.createFavoriteFlight = async (req, res, next) => {
     }
 };
 
-exports.getFavoriteFlightByFlightId = async (req, res, next) => {
+exports.getFavoriteFlightById = async (req, res, next) => {
     try {
-        const { flightId } = req.params;
+        const { id } = req.params;
 
-        const data =
-            await favoriteFlightUseCase.getFavoriteFlightByFlightId(flightId);
+        const data = await favoriteFlightUseCase.getFavoriteFlightById(id);
 
         return res.status(200).json({
             message: "Success",
@@ -80,9 +79,9 @@ exports.getAllFavoriteFlights = async (req, res, next) => {
     }
 };
 
-exports.editFavoriteFlightbyFlightId = async (req, res, next) => {
+exports.editFavoriteFlightById = async (req, res, next) => {
     try {
-        const { flightId } = req.params;
+        const { id } = req.params;
         const { discount, description } = req.body;
         const payload = {};
 
@@ -105,8 +104,8 @@ exports.editFavoriteFlightbyFlightId = async (req, res, next) => {
             });
         }
 
-        const data = await favoriteFlightUseCase.editFavoriteFlightbyFlightId(
-            flightId,
+        const data = await favoriteFlightUseCase.editFavoriteFlightById(
+            id,
             payload,
         );
 
@@ -119,11 +118,11 @@ exports.editFavoriteFlightbyFlightId = async (req, res, next) => {
     }
 };
 
-exports.deleteFavoriteFlight = async (req, res, next) => {
+exports.deleteFavoriteFlightById = async (req, res, next) => {
     try {
-        const { flightId } = req.params;
+        const { id } = req.params;
 
-        await favoriteFlightUseCase.deleteFavoriteFlight(flightId);
+        await favoriteFlightUseCase.deleteFavoriteFlightById(id);
 
         return res.status(200).json({
             message: "Success",
