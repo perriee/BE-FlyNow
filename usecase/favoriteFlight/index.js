@@ -27,7 +27,6 @@ exports.getFavoriteFlightById = async (id) => {
         description: favoriteFlight.description,
         isFavorite: favoriteFlight.isFavorite,
         image: favoriteFlight.image,
-
         createdAt: favoriteFlight.createdAt,
         updatedAt: favoriteFlight.updatedAt,
         deletedAt: favoriteFlight.deletedAt,
@@ -60,7 +59,6 @@ exports.getAllFavoriteFlights = async () => {
             description: flight.description,
             isFavorite: flight.isFavorite,
             image: flight.image,
-
             createdAt: flight.createdAt,
             updatedAt: flight.updatedAt,
             deletedAt: flight.deletedAt,
