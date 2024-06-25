@@ -6,6 +6,7 @@ const {
     getPaymentNotificationsByUserID,
     getFlightNotificationsByUserID,
     getPromoNotificationsByUserID,
+    getBookingNotificationsByUserID,
     updateNotification,
     readNotification,
     deleteNotification,
@@ -14,7 +15,8 @@ const {
 
 exports.createNotification = async (req, res, next) => {
     try {
-        const { userId, flightId, paymentId, type, message } = req.body;
+        const { userId, flightId, paymentId, bookingId, type, message } =
+            req.body;
 
         if (!type || type === "") {
             return next({
@@ -62,6 +64,22 @@ exports.createNotification = async (req, res, next) => {
             }
 
             payload.paymentId = paymentId;
+        }
+
+        if (type === "booking" && (!bookingId || bookingId === "")) {
+            return next({
+                message: "Booking ID is required!",
+                statusCode: 400,
+            });
+        } else if (type === "booking") {
+            if (!payload.userId || payload.userId === "") {
+                return next({
+                    message: "User ID is required!",
+                    statusCode: 400,
+                });
+            }
+
+            payload.bookingId = bookingId;
         }
 
         const data = await createNotification(payload);
@@ -155,6 +173,20 @@ exports.getPromoNotificationsByUserID = async (req, res, next) => {
     try {
         const userId = req.user.id;
         const data = await getPromoNotificationsByUserID(userId);
+
+        res.status(200).json({
+            message: "Success",
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getBookingNotificationsByUserID = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const data = await getBookingNotificationsByUserID(userId);
 
         res.status(200).json({
             message: "Success",

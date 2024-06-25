@@ -1,4 +1,6 @@
-const { payment, booking } = require("../../models");
+const { payment, booking, notification } = require("../../models");
+const { createNotification } = require("../../usecase/notification/index");
+const { getBookingId } = require("../../usecase/booking/index");
 
 exports.getPayments = async () => {
     const data = await payment.findAll();
@@ -32,6 +34,38 @@ exports.getPaymentByBookingId = async (bookingId) => {
 
 exports.createPayment = async (payload) => {
     const data = await payment.create(payload);
+
+    // Kirim notifikasi jika pembuatan status payment berhasil
+    if (data) {
+        const bookingData = await getBookingId(payload.bookingId);
+        const bookingCode = bookingData.data.bookingCode;
+        const userId = bookingData.data.userId;
+        const departureCity1 =
+            bookingData.data.departureFlight.departureAirport.city;
+        const arrivalCity1 =
+            bookingData.data.departureFlight.arrivalAirport.city;
+
+        if (bookingData.data.returnFlight) {
+            const departureCity2 =
+                bookingData.data.returnFlight.departureAirport.city;
+            const arrivalCity2 =
+                bookingData.data.returnFlight.arrivalAirport.city;
+
+            const notifPayload = {
+                userId,
+                type: "payment",
+                message: `Siap untuk terbang dari ${departureCity1} ke ${arrivalCity1} dan dari ${departureCity2} ke ${arrivalCity2}? Segera lakukan pembayaran untuk pesanan dengan kode ${bookingCode}!`,
+            };
+            await createNotification(notifPayload);
+        } else {
+            const notifPayload = {
+                userId,
+                type: "payment",
+                message: `Siap untuk terbang dari ${departureCity1} ke ${arrivalCity1}? Segera lakukan pembayaran untuk pesanan dengan kode ${bookingCode}!`,
+            };
+            await createNotification(notifPayload);
+        }
+    }
 
     return data;
 };

@@ -9,6 +9,7 @@ const {
     getPaymentNotificationsByUserID,
     getFlightNotificationsByUserID,
     getPromoNotificationsByUserID,
+    getBookingNotificationsByUserID,
     updateNotification,
     readNotification,
     deleteNotification,
@@ -20,6 +21,7 @@ router.get("/all", getAllNotificationsByUserID);
 router.get("/payment", getPaymentNotificationsByUserID);
 router.get("/flight", getFlightNotificationsByUserID);
 router.get("/promo", getPromoNotificationsByUserID);
+router.get("/booking", getBookingNotificationsByUserID);
 router.patch("/read/:id", readNotification);
 router.get("/search", searchNotification);
 

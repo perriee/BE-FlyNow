@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { booking, user, flight } = require("../../models");
+const { createNotification } = require("../../usecase/notification/index");
 
 exports.getBookings = async () => {
     const data = await booking.findAll({
@@ -53,6 +54,17 @@ exports.createBooking = async (payload, t) => {
         { ...payload, bookingCode },
         { transaction: t },
     );
+
+    // Kirim notifikasi jika pemesanan berhasil dibuat
+    if (data) {
+        const notifPayload = {
+            userId,
+            type: "payment",
+            message: `Siap untuk terbang dari ${departureCity1} ke ${arrivalCity1} dan dari ${departureCity2} ke ${arrivalCity2}? Segera lakukan pembayaran untuk pesanan dengan kode ${bookingCode}!`,
+        };
+        await createNotification(notifPayload);
+    }
+
     return data;
 };
 

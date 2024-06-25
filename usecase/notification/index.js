@@ -36,6 +36,10 @@ exports.getPromoNotificationsByUserID = async (userId) => {
     return await getNotificationsByUserID(userId, { type: "promo" });
 };
 
+exports.getBookingNotificationsByUserID = async (userId) => {
+    return await getNotificationsByUserID(userId, { type: "booking" });
+};
+
 exports.updateNotification = async (id, payload) => {
     return await updateNotification(id, payload);
 };
