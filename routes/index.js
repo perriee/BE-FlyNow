@@ -22,7 +22,7 @@ router.use("/airports", airport);
 router.use("/seats", seat);
 router.use("/payment", payment);
 router.use("/flight", flight);
-router.use('/favorite-flights', favoriteFlight);
+router.use("/favorite-flights", authMiddleware(), favoriteFlight);
 router.use("/booking", booking);
 router.use("/history", history);
 router.use("/booking-detail", authMiddleware(), bookingDetail);
