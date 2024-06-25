@@ -1,6 +1,13 @@
 const { where } = require("sequelize");
 const { Op, Sequelize } = require("sequelize");
-const { flight, airport, airline, seat } = require("../../models");
+const {
+    flight,
+    airport,
+    airline,
+    seat,
+    notification,
+} = require("../../models");
+const { createNotification } = require("../../usecase/notification/index");
 
 exports.searchFlight = async (query) => {
     let order;
@@ -322,6 +329,14 @@ exports.updateFlight = async (id, payload) => {
     });
 
     if (data.length > 0) {
+        // Jika berhasil, notifikasikan ke semua users yang book ke flight ini
+        let notifPayload = {
+            flightId: id,
+            type: "flight",
+            message: `Terdapat perubahan pada penerbangan Anda dengan kode ${data[0].dataValues.flightCode}. Mohon maaf atas ketidaknyamanan ini, harap periksa detail penerbangan terbaru, terima kasih atas pengertiannya`,
+        };
+        await createNotification(notifPayload);
+
         return data[0];
     }
 

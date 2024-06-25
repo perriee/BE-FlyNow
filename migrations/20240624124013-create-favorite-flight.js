@@ -1,32 +1,41 @@
-"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable("payments", {
+        await queryInterface.createTable("favorite_flights", {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER,
             },
-            bookingId: {
-                type: Sequelize.BIGINT,
+            flightId: {
+                type: Sequelize.INTEGER,
                 references: {
                     model: {
-                        tableName: "bookings",
+                        tableName: "flights",
                     },
                     key: "id",
                 },
             },
-            paymentAmount: {
-                type: Sequelize.INTEGER,
+            isFavorite: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: true,
+                allowNull: false,
             },
-            paymentMethod: {
+            discount: {
+                type: Sequelize.TEXT,
+                allowNull: false,
+            },
+            description: {
+                type: Sequelize.TEXT,
+                allowNull: false,
+            },
+            image: {
                 type: Sequelize.STRING,
+                allowNull: true,
             },
-            paymentStatus: {
-                type: Sequelize.ENUM("paid", "pending", "expired"),
-                defaultValue: "pending",
+            deletedAt: {
+                type: Sequelize.DATE,
             },
             createdAt: {
                 allowNull: false,
@@ -36,13 +45,11 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.DATE,
             },
-            deletedAt: {
-                allowNull: true,
-                type: Sequelize.DATE,
-            },
         });
     },
+
+    // eslint-disable-next-line no-unused-vars
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable("payments");
+        await queryInterface.dropTable("favorite_flights");
     },
 };

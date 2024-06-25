@@ -30,6 +30,8 @@ app.use("*", (req, res) => {
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
+    console.error(err);
+
     let statusCode = 500;
     let message = "Internal Server Error";
 
