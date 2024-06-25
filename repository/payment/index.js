@@ -1,4 +1,6 @@
-const { payment, booking } = require("../../models");
+const { payment, booking, notification } = require("../../models");
+const { createNotification } = require("../../usecase/notification/index");
+const { getBookingId } = require("../../usecase/booking/index");
 
 exports.getPayments = async () => {
     const data = await payment.findAll();
@@ -32,6 +34,19 @@ exports.getPaymentByBookingId = async (bookingId) => {
 
 exports.createPayment = async (payload) => {
     const data = await payment.create(payload);
+
+    // Kirim notifikasi jika pembuatan status payment berhasil
+    if (data) {
+        const bookingData = await getBookingId(payload.bookingId);
+
+        const notifPayload = {
+            userId: bookingData.userId,
+            type: "payment",
+            message: `Selangkah lagi dan dapatkan tiket penerbangan Anda! Segera selesaikan pembayaran untuk booking code ${bookingData.bookingCode} sebesar Rp ${payload.paymentAmount}`,
+        };
+
+        await createNotification(notifPayload);
+    }
 
     return data;
 };

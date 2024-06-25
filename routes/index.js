@@ -13,6 +13,7 @@ const { authMiddleware } = require("../middleware/auth");
 const booking = require("./booking");
 const history = require("./history");
 const bookingDetail = require("./bookingDetail");
+const notification = require("./notification");
 
 router.use("/auth", auth);
 router.use("/passengers", passenger);
@@ -26,5 +27,6 @@ router.use("/favorite-flights", favoriteFlight);
 router.use("/booking", booking);
 router.use("/history", history);
 router.use("/booking-detail", authMiddleware(), bookingDetail);
+router.use("/notification", authMiddleware(), notification);
 
 module.exports = router;

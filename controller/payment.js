@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const paymentUsecase = require("../usecase/payment");
 const bookingUsecase = require("../usecase/booking");
+const createNotificationUsecase = require("../usecase/notification");
 const { updateStatusBasedOnMidtransResponse } = require("../helper/midtrans");
 const { CLIENT_URL, MIDTRANS_SERVER_KEY } = process.env;
 
@@ -224,6 +225,27 @@ exports.paymentNotification = async (req, res, next) => {
                 payment.transactionId,
                 data,
             );
+
+            const paymentStatus = payment.dataValues.paymentStatus;
+            const bookingData = await bookingUsecase.getBookingId(bookingId);
+
+            if (payment.dataValues.paymentStatus === "paid") {
+                const notifPayload = {
+                    userId: bookingData.userId,
+                    type: "payment",
+                    message: `Pembayaran Anda untuk pesanan dengan kode ${bookingData.bookingCode} telah berhasil! Terima kasih telah mempercayakan pemesanan Anda kepada kami. Selamat menikmati perjalanan Anda!`,
+                };
+
+                createNotificationUsecase.createNotification(notifPayload);
+            } else if (paymentStatus.dataValues.paymentStatus === "expired") {
+                const notifPayload = {
+                    userId: bookingData.userId,
+                    type: "payment",
+                    message: `Pembayaran Anda untuk pesanan dengan kode ${bookingData.bookingCode} telah kadaluarsa. Dengan berat hati, pesanan Anda kami batalkan. Silahkan lakukan pemesanan kembali. Terima kasih!`,
+                };
+
+                createNotificationUsecase.createNotification(notifPayload);
+            }
         }
 
         res.status(200).json({
