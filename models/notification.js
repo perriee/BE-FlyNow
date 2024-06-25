@@ -9,17 +9,13 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             notification.belongsTo(models.user, { foreignKey: "userId" });
-            notification.belongsTo(models.flight, { foreignKey: "flightId" });
-            notification.belongsTo(models.payment, {
-                foreignKey: "paymentId",
-            });
+            notification.belongsTo(models.booking, { foreignKey: "bookingId" });
         }
     }
     notification.init(
         {
             userId: DataTypes.INTEGER,
-            flightId: DataTypes.INTEGER,
-            paymentId: DataTypes.INTEGER,
+            bookingId: DataTypes.INTEGER,
             message: DataTypes.TEXT,
             type: DataTypes.STRING,
             isRead: DataTypes.BOOLEAN,

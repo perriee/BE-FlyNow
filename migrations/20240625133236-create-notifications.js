@@ -16,17 +16,10 @@ module.exports = {
                     key: "id",
                 },
             },
-            flightId: {
+            bookingId: {
                 type: Sequelize.INTEGER,
                 references: {
-                    model: "flights",
-                    key: "id",
-                },
-            },
-            paymentId: {
-                type: Sequelize.INTEGER,
-                references: {
-                    model: "payments",
+                    model: "bookings",
                     key: "id",
                 },
             },
