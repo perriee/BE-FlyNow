@@ -88,3 +88,12 @@ exports.updatePaymentStatus = async (transactionId, payload) => {
 
     return data;
 };
+
+exports.getBookingIdByTrxId = async (transactionId) => {
+    const data = await payment.findOne({
+        where: { transactionId: transactionId },
+    });
+    console.log("🚀 ~ REPOSITORY getBookingIdByTrxId= ~ data:", data);
+
+    return data;
+};

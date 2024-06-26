@@ -49,7 +49,7 @@ exports.getBookingByUserId = async (userId) => {
 };
 
 exports.createBooking = async (payload, t) => {
-    const bookingCode = crypto.randomBytes(9).toString("hex");
+    const bookingCode = crypto.randomBytes(5).toString("hex");
     const data = await booking.create(
         { ...payload, bookingCode },
         { transaction: t },
