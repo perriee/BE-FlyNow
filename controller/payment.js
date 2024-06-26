@@ -135,7 +135,7 @@ exports.createPayment = async (req, res, next) => {
             },
             item_details: item_details_data,
             callbacks: {
-                finish: `${CLIENT_URL}/flight/payment/success`,
+                finish: `${CLIENT_URL}/flight/payment/status`,
                 error: CLIENT_URL,
             },
             expiry: {
