@@ -60,3 +60,8 @@ exports.updatePaymentStatus = async (transactionId, payload) => {
     const data = await paymentRepo.updatePaymentStatus(transactionId, payload);
     return data;
 };
+
+exports.getBookingIdByTrxId = async (transactionId) => {
+    const data = await paymentRepo.getBookingIdByTrxId(transactionId);
+    return data;
+};

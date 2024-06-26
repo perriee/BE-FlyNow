@@ -1,5 +1,8 @@
 const crypto = require("crypto");
 const paymentUsecase = require("../usecase/payment");
+const bookingUsecase = require("../usecase/booking");
+const createNotificationUsecase = require("../usecase/notification");
+const { bookingDetail, seat } = require("../models");
 
 exports.updateStatusBasedOnMidtransResponse = async (
     transactionId,
@@ -23,6 +26,12 @@ exports.updateStatusBasedOnMidtransResponse = async (
     let transactionStatus = dataFromMidtrans.transaction_status;
     let fraudStatus = dataFromMidtrans.fraud_status;
 
+    // get bookingId
+    const { bookingId } =
+        await paymentUsecase.getBookingIdByTrxId(transactionId);
+
+    const bookingData = await bookingUsecase.getBookingId(bookingId);
+
     if (transactionStatus == "capture") {
         if (fraudStatus == "accept") {
             const payload = {
@@ -35,6 +44,15 @@ exports.updateStatusBasedOnMidtransResponse = async (
                 transactionId,
                 payload,
             );
+
+            // Send Notification
+            const notifPayload = {
+                userId: bookingData.userId,
+                type: "payment",
+                message: `Pembayaran Anda untuk pesanan dengan kode ${bookingData.bookingCode} telah berhasil! Terima kasih telah mempercayakan pemesanan Anda kepada kami. Selamat menikmati perjalanan Anda!`,
+            };
+
+            createNotificationUsecase.createNotification(notifPayload);
 
             responseData = transaction;
         }
@@ -50,6 +68,15 @@ exports.updateStatusBasedOnMidtransResponse = async (
             payload,
         );
 
+        // Send Notification
+        const notifPayload = {
+            userId: bookingData.userId,
+            type: "payment",
+            message: `Pembayaran Anda untuk pesanan dengan kode ${bookingData.bookingCode} telah berhasil! Terima kasih telah mempercayakan pemesanan Anda kepada kami. Selamat menikmati perjalanan Anda!`,
+        };
+
+        createNotificationUsecase.createNotification(notifPayload);
+
         responseData = transaction;
     } else if (transactionStatus == "expire") {
         const payload = {
@@ -61,6 +88,36 @@ exports.updateStatusBasedOnMidtransResponse = async (
             transactionId,
             payload,
         );
+
+        const bookingDetailData = await bookingDetail.findAll({
+            where: {
+                bookingId,
+            },
+        });
+
+        const promises = bookingDetailData.map(async (bookingDetail) => {
+            await seat.update(
+                {
+                    seatAvailable: true,
+                },
+                {
+                    where: {
+                        id: bookingDetail.seatId,
+                    },
+                },
+            );
+        });
+
+        await Promise.all(promises);
+
+        // Send Notification
+        const notifPayload = {
+            userId: bookingData.userId,
+            type: "payment",
+            message: `Pembayaran Anda untuk pesanan dengan kode ${bookingData.bookingCode} telah kadaluarsa. Dengan berat hati, pesanan Anda kami batalkan. Silahkan lakukan pemesanan kembali. Terima kasih!`,
+        };
+
+        createNotificationUsecase.createNotification(notifPayload);
 
         responseData = transaction;
     } else if (transactionStatus == "pending") {

@@ -1,9 +1,8 @@
 const crypto = require("crypto");
 const paymentUsecase = require("../usecase/payment");
 const bookingUsecase = require("../usecase/booking");
-const createNotificationUsecase = require("../usecase/notification");
 const { updateStatusBasedOnMidtransResponse } = require("../helper/midtrans");
-const { CLIENT_URL, MIDTRANS_SERVER_KEY } = process.env;
+const { CLIENT_URL, MIDTRANS_SERVER_KEY, MIDTRANS_APP_URL } = process.env;
 
 exports.getPayments = async (req, res, next) => {
     try {
@@ -65,7 +64,7 @@ exports.createPayment = async (req, res, next) => {
             item_details_data.push({
                 id: departureFlight.id,
                 price: departureFlight.price,
-                name: "Adult - " + departureFlight.flightCode,
+                name: "Adult | " + departureFlight.flightCode,
                 quantity: detailBooking.numAdults,
             });
         }
@@ -75,7 +74,7 @@ exports.createPayment = async (req, res, next) => {
             item_details_data.push({
                 id: departureFlight.id,
                 price: departureFlight.price,
-                name: "Child - " + departureFlight.flightCode,
+                name: "Child | " + departureFlight.flightCode,
                 quantity: detailBooking.numChildren,
             });
         }
@@ -85,7 +84,7 @@ exports.createPayment = async (req, res, next) => {
             item_details_data.push({
                 id: departureFlight.id,
                 price: 0,
-                name: "Baby - " + departureFlight.flightCode,
+                name: "Baby | " + departureFlight.flightCode,
                 quantity: detailBooking.numBabies,
             });
         }
@@ -97,7 +96,7 @@ exports.createPayment = async (req, res, next) => {
                 item_details_data.push({
                     id: returnFlight.id,
                     price: returnFlight.price,
-                    name: "Adult - " + returnFlight.flightCode,
+                    name: "Adult | " + returnFlight.flightCode,
                     quantity: detailBooking.numAdults,
                 });
             }
@@ -107,7 +106,7 @@ exports.createPayment = async (req, res, next) => {
                 item_details_data.push({
                     id: returnFlight.id,
                     price: returnFlight.price,
-                    name: "Child - " + returnFlight.flightCode,
+                    name: "Child | " + returnFlight.flightCode,
                     quantity: detailBooking.numChildren,
                 });
             }
@@ -117,7 +116,7 @@ exports.createPayment = async (req, res, next) => {
                 item_details_data.push({
                     id: returnFlight.id,
                     price: 0,
-                    name: "Baby - " + returnFlight.flightCode,
+                    name: "Baby | " + returnFlight.flightCode,
                     quantity: detailBooking.numBabies,
                 });
             }
@@ -139,13 +138,13 @@ exports.createPayment = async (req, res, next) => {
                 error: CLIENT_URL,
             },
             expiry: {
-                unit: "hour",
+                unit: "minute",
                 duration: 2,
             },
         };
 
         const response = await fetch(
-            `${process.env.MIDTRANS_APP_URL}/snap/v1/transactions`,
+            `${MIDTRANS_APP_URL}/snap/v1/transactions`,
             {
                 method: "POST",
                 headers: {
@@ -225,27 +224,6 @@ exports.paymentNotification = async (req, res, next) => {
                 payment.transactionId,
                 data,
             );
-
-            const paymentStatus = payment.dataValues.paymentStatus;
-            const bookingData = await bookingUsecase.getBookingId(bookingId);
-
-            if (payment.dataValues.paymentStatus === "paid") {
-                const notifPayload = {
-                    userId: bookingData.userId,
-                    type: "payment",
-                    message: `Pembayaran Anda untuk pesanan dengan kode ${bookingData.bookingCode} telah berhasil! Terima kasih telah mempercayakan pemesanan Anda kepada kami. Selamat menikmati perjalanan Anda!`,
-                };
-
-                createNotificationUsecase.createNotification(notifPayload);
-            } else if (paymentStatus.dataValues.paymentStatus === "expired") {
-                const notifPayload = {
-                    userId: bookingData.userId,
-                    type: "payment",
-                    message: `Pembayaran Anda untuk pesanan dengan kode ${bookingData.bookingCode} telah kadaluarsa. Dengan berat hati, pesanan Anda kami batalkan. Silahkan lakukan pemesanan kembali. Terima kasih!`,
-                };
-
-                createNotificationUsecase.createNotification(notifPayload);
-            }
         }
 
         res.status(200).json({
