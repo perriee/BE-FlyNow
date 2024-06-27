@@ -135,7 +135,7 @@ exports.createPayment = async (req, res, next) => {
             item_details: item_details_data,
             callbacks: {
                 finish: `${CLIENT_URL}/flight/payment/status`,
-                error: CLIENT_URL,
+                error: `${CLIENT_URL}/flight/payment/status`,
             },
             expiry: {
                 unit: "minute",
@@ -184,10 +184,10 @@ exports.createPayment = async (req, res, next) => {
 
 exports.deletePayment = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const { bookingId } = req.params;
 
-        if (id) {
-            const data = await paymentUsecase.deletePayment(id);
+        if (bookingId) {
+            const data = await paymentUsecase.deletePayment(bookingId);
 
             res.status(200).json({
                 message: "success",
