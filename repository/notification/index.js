@@ -144,7 +144,7 @@ exports.checkUnreadNotifications = async (userId) => {
     const data = await notification.findOne({
         where: {
             userId,
-            isRead: false,
+            isRead: { [Op.or]: [false, null] },
         },
     });
 
