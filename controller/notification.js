@@ -7,6 +7,7 @@ const {
     getFlightNotificationsByUserID,
     getPromoNotificationsByUserID,
     getBookingNotificationsByUserID,
+    getUnreadNotificationsByUserID,
     updateNotification,
     readNotification,
     deleteNotification,
@@ -169,6 +170,20 @@ exports.getBookingNotificationsByUserID = async (req, res, next) => {
     try {
         const userId = req.user.id;
         const data = await getBookingNotificationsByUserID(userId);
+
+        res.status(200).json({
+            message: "Success",
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getUnreadNotificationsByUserID = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const data = await getUnreadNotificationsByUserID(userId);
 
         res.status(200).json({
             message: "Success",

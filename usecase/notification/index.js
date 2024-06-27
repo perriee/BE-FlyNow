@@ -41,6 +41,10 @@ exports.getBookingNotificationsByUserID = async (userId) => {
     return await getNotificationsByUserID(userId, { type: "booking" });
 };
 
+exports.getUnreadNotificationsByUserID = async (userId) => {
+    return await getNotificationsByUserID(userId, { isRead: false });
+};
+
 exports.updateNotification = async (id, payload) => {
     return await updateNotification(id, payload);
 };
