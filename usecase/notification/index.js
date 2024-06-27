@@ -1,3 +1,5 @@
+const { Sequelize } = require("../../models");
+const { Op } = Sequelize;
 const {
     createNotification,
     getAllNotifications,
@@ -42,7 +44,9 @@ exports.getBookingNotificationsByUserID = async (userId) => {
 };
 
 exports.getUnreadNotificationsByUserID = async (userId) => {
-    return await getNotificationsByUserID(userId, { isRead: false });
+    return await getNotificationsByUserID(userId, {
+        isRead: { [Op.or]: [false, null] },
+    });
 };
 
 exports.updateNotification = async (id, payload) => {
