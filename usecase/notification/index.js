@@ -6,6 +6,7 @@ const {
     updateNotification,
     deleteNotification,
     searchNotification,
+    checkUnreadNotifications,
 } = require("../../repository/notification");
 
 exports.createNotification = async (payload) => {
@@ -54,4 +55,8 @@ exports.deleteNotification = async (id) => {
 
 exports.searchNotification = async (payload) => {
     return await searchNotification(payload);
+};
+
+exports.checkUnreadNotifications = async (userId) => {
+    return await checkUnreadNotifications(userId);
 };

@@ -11,6 +11,7 @@ const {
     readNotification,
     deleteNotification,
     searchNotification,
+    checkUnreadNotifications,
 } = require("../usecase/notification");
 
 exports.createNotification = async (req, res, next) => {
@@ -234,6 +235,20 @@ exports.searchNotification = async (req, res, next) => {
     try {
         const { keyword } = req.query;
         const data = await searchNotification(keyword);
+
+        res.status(200).json({
+            message: "Success",
+            data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.checkUnreadNotifications = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const data = await checkUnreadNotifications(userId);
 
         res.status(200).json({
             message: "Success",

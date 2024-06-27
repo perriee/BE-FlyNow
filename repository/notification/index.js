@@ -139,3 +139,18 @@ exports.searchNotification = async (payload) => {
 
     return data;
 };
+
+exports.checkUnreadNotifications = async (userId) => {
+    const data = await notification.findOne({
+        where: {
+            userId,
+            isRead: false,
+        },
+    });
+
+    if (data) {
+        return true;
+    } else {
+        return false;
+    }
+};
