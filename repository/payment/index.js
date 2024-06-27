@@ -2,6 +2,13 @@ const { payment, booking, notification } = require("../../models");
 const { createNotification } = require("../../usecase/notification/index");
 const { getBookingId } = require("../../usecase/booking/index");
 
+const formatIDR = (amount) => {
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+    }).format(amount);
+};
+
 exports.getPayments = async () => {
     const data = await payment.findAll();
     return data;
@@ -38,11 +45,12 @@ exports.createPayment = async (payload) => {
     // Kirim notifikasi jika pembuatan status payment berhasil
     if (data) {
         const bookingData = await getBookingId(payload.bookingId);
+        const paymentFormatted = formatIDR(payload.paymentAmount);
 
         const notifPayload = {
             userId: bookingData.userId,
             type: "payment",
-            message: `Selangkah lagi dan dapatkan tiket penerbangan Anda! Segera selesaikan pembayaran untuk booking code ${bookingData.bookingCode} sebesar Rp ${payload.paymentAmount}`,
+            message: `Selangkah lagi dan dapatkan tiket penerbangan Anda! Segera selesaikan pembayaran pemesanan dengan kode ${bookingData.bookingCode} sebesar ${paymentFormatted}`,
         };
 
         await createNotification(notifPayload);
