@@ -61,8 +61,8 @@ exports.deleteNotification = async (id) => {
     return await deleteNotification(id);
 };
 
-exports.searchNotification = async (payload) => {
-    return await searchNotification(payload);
+exports.searchNotification = async (userId, payload) => {
+    return await searchNotification(userId, payload);
 };
 
 exports.checkUnreadNotifications = async (userId) => {

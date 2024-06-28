@@ -248,8 +248,9 @@ exports.deleteNotification = async (req, res, next) => {
 
 exports.searchNotification = async (req, res, next) => {
     try {
+        const userId = req.user.id;
         const { keyword } = req.query;
-        const data = await searchNotification(keyword);
+        const data = await searchNotification(userId, keyword);
 
         res.status(200).json({
             message: "Success",
