@@ -29,7 +29,9 @@ exports.createNotification = async (payload) => {
             raw: true,
         });
 
-        const notificationsPayload = targetUser.map((user) => ({
+        const uniqueTargetUser = targetUser.map((user) => user.userId);
+
+        const notificationsPayload = uniqueTargetUser.map((user) => ({
             ...payload,
             userId: user.userId,
         }));
