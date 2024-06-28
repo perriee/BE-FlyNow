@@ -124,7 +124,7 @@ exports.deleteNotification = async (id) => {
 };
 
 /* Additional but essential */
-exports.searchNotification = async (payload) => {
+exports.searchNotification = async (userId, payload) => {
     /* Will returns all notifications where its message (content) or type CONTAINS the payload*/
     /* Payload searhing is case-INSENSITIVE */
     const data = await notification.findAll({
@@ -134,6 +134,7 @@ exports.searchNotification = async (payload) => {
                 { message: { [Op.iLike]: `%${payload}%` } },
                 { type: { [Op.iLike]: `%${payload}%` } },
             ],
+            userId,
         },
     });
 
