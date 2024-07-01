@@ -138,7 +138,7 @@ exports.createPayment = async (req, res, next) => {
                 error: `${CLIENT_URL}/flight/payment/status`,
             },
             expiry: {
-                unit: "minute",
+                unit: "hour",
                 duration: 2,
             },
         };
